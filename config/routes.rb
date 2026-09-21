@@ -7,5 +7,11 @@ Rails.application.routes.draw do
   end
   resources :bookings, only: %i[ index destroy ]
 
+  namespace :admin do
+    resources :portals, except: :show do
+      resources :bookings, only: %i[ index destroy ]
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

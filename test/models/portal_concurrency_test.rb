@@ -79,6 +79,46 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
     assert_equal 1, @portal.bookings.count, "the last seat may only be given away once"
   end
 
+  # The second writer of the capacity rule: the Admin lowering the Capacity
+  # while a Traveler is reserving. The Portal has room for two, one seat is
+  # taken, and a second reservation is held open in the middle of its
+  # transaction. Lowering the Capacity to one at that moment looks fine to a
+  # check that counts one Booking. The change has to wait for the running
+  # reservation, sees two Bookings and is refused, so the Portal is never left
+  # over its Capacity.
+  #
+  # This test proves the behaviour, not the lock: unlike the reservation test
+  # above it still passes if `with_lock` is removed from `update_under_lock`,
+  # because on SQLite `save` opens its own BEGIN IMMEDIATE transaction around
+  # the validation. See the note in Portal#update_under_lock.
+  test "lowering the capacity cannot slip past a reservation that is still running" do
+    @portal.update!(capacity: 2)
+    @portal.bookings.create!(user: @travelers.first)
+
+    holder_is_inside = Queue.new
+    slow_portal = Portal.find(@portal.id)
+    hold_the_transaction = ->(_user) { holder_is_inside << true; sleep 0.5; false }
+
+    lowered = nil
+
+    stubbing(slow_portal, :reserved_by?, hold_the_transaction) do
+      holder = Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection { slow_portal.reserve_seat_for(@travelers.second) }
+      end
+
+      holder_is_inside.pop
+      lowered = ActiveRecord::Base.connection_pool.with_connection do
+        Portal.find(@portal.id).update_under_lock(capacity: 1)
+      end
+
+      assert_equal :reserved, holder.value, "the reservation running first must get its seat"
+    end
+
+    assert_not lowered, "lowering below the number of bookings must be refused"
+    assert_equal 2, @portal.reload.capacity
+    assert_equal 2, @portal.bookings.count
+  end
+
   private
     # Every thread first takes its own connection and its own Portal object and
     # reports that it is ready. Only once all of them stand ready does the start

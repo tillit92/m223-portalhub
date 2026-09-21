@@ -17,6 +17,9 @@
           <% if Current.user %>
             <%= link_to "Portale", root_path, class: "site-nav__link", aria: { current: current_page?(root_path) ? "page" : nil } %>
             <%= link_to "Meine Reservierungen", bookings_path, class: "site-nav__link", aria: { current: current_page?(bookings_path) ? "page" : nil } %>
+            <% if Current.user.admin? %>
+              <%= link_to "Admin", admin_portals_path, class: "site-nav__link", aria: { current: request.path.start_with?("/admin") ? "page" : nil } %>
+            <% end %>
             <span class="site-nav__user"><%= Current.user.name %></span>
             <%= button_to "Abmelden", session_path, method: :delete, class: "button button--ghost button--small" %>
           <% end %>

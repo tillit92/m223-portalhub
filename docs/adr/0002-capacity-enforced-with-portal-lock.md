@@ -4,6 +4,10 @@ Bookings must never exceed a Portal's capacity, even when several Travelers book
 
 On SQLite `lock!` emits no `FOR UPDATE`; serialization comes from the Rails 8 adapter starting every write transaction as `BEGIN IMMEDIATE`. That is why the check and the insert must share one transaction.
 
+## Consequences
+
+For the Admin's capacity change the explicit lock is redundant on SQLite: `save` opens its own `BEGIN IMMEDIATE` transaction that covers the validation, so the Bookings are counted under the write lock anyway. The lock is kept so the rule is stated openly and does not depend on that detail. The reservation is different: it counts *before* it inserts, so it genuinely needs `with_lock`, and its test fails without it.
+
 ## Considered Options
 
 - **Plain validation** (count, then insert): two requests can both see one free seat. Rejected, this is the exact race the project must prevent.

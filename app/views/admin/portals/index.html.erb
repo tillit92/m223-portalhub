@@ -1,0 +1,47 @@
+<% content_for :title, "Portale verwalten - PortalHub" %>
+
+<div class="page__header page__header--split">
+  <div>
+    <h1 class="page__title">Portale verwalten</h1>
+    <p class="lead">Alle Portale, auch die schon abgeflogenen.</p>
+  </div>
+  <%= link_to "+ Neues Portal", new_admin_portal_path, class: "button" %>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Dimension</th>
+        <th scope="col">Abflug</th>
+        <th scope="col" class="table__number">Kapazität</th>
+        <th scope="col" class="table__number">Reserviert</th>
+        <th scope="col"><span class="visually-hidden">Aktionen</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @portals.each do |portal| %>
+        <tr>
+          <th scope="row">
+            <%= portal.name %>
+            <% if portal.departed? %><span class="tag">ABGEFLOGEN</span><% end %>
+          </th>
+          <td class="mono"><%= portal.dimension %></td>
+          <td class="table__nowrap"><%= departure_label(portal) %></td>
+          <td class="table__number mono"><%= portal.capacity %></td>
+          <td class="table__number mono"><%= portal.booked_seats %></td>
+          <td>
+            <div class="table__actions">
+              <%= link_to "Bearbeiten", edit_admin_portal_path(portal), class: "button button--ghost button--small" %>
+              <%= link_to "Reservierungen", admin_portal_bookings_path(portal), class: "button button--ghost button--small" %>
+              <%= button_to "Löschen", admin_portal_path(portal), method: :delete,
+                    class: "button button--ghost button--small button--danger",
+                    form: { data: { turbo_confirm: delete_portal_prompt(portal) } } %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

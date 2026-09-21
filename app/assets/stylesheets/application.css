@@ -216,6 +216,23 @@ a {
   font-family: var(--font-mono);
 }
 
+.page__header--split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .lead {
   max-width: 46ch;
   margin-top: var(--space-4);
@@ -333,6 +350,77 @@ a {
 .field__error {
   color: var(--danger);
   font-size: var(--text-sm);
+}
+
+.form--wide {
+  max-width: 32rem;
+}
+
+.form__actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.button--danger:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* Tables: plain rows separated by dividers, no cards */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.table thead th {
+  border-top: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-weight: 550;
+}
+
+.table tbody th {
+  font-weight: 600;
+}
+
+.table tbody tr:hover {
+  background: var(--surface);
+}
+
+.table__number {
+  text-align: right !important;
+}
+
+.table__nowrap {
+  white-space: nowrap;
+}
+
+.table__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.table__actions form {
+  margin: 0;
+}
+
+.table .tag {
+  margin-left: var(--space-2);
+  line-height: 1.5rem;
 }
 
 /* Flash messages */

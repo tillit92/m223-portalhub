@@ -1,0 +1,47 @@
+<% content_for :title, "Reservierungen - PortalHub" %>
+
+<%= link_to admin_portals_path, class: "back-link" do %>&larr; Zurück zu den Portalen<% end %>
+
+<div class="page__header">
+  <h1 class="page__title">Reservierungen: <%= @portal.name %></h1>
+  <p class="lead">
+    <span class="mono"><%= @portal.dimension %></span>, Abflug <%= departure_label(@portal) %>.
+    <%= @portal.booked_seats %> von <%= @portal.capacity %> Plätzen belegt.
+  </p>
+</div>
+
+<% if @bookings.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Reisender</th>
+          <th scope="col">E-Mail</th>
+          <th scope="col"><span class="visually-hidden">Aktionen</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @bookings.each do |booking| %>
+          <tr>
+            <th scope="row"><%= booking.user.name %></th>
+            <td class="mono"><%= booking.user.email_address %></td>
+            <td>
+              <div class="table__actions">
+                <% if booking.cancellable? %>
+                  <%= button_to "Stornieren", admin_portal_booking_path(@portal, booking), method: :delete,
+                        class: "button button--ghost button--small",
+                        form: { data: { turbo_confirm: "Reservierung von #{booking.user.name} wirklich stornieren?" } } %>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty">
+    <p class="empty__title">Noch niemand hat reserviert.</p>
+    <p class="lead">Sobald jemand einen Platz nimmt, steht er hier.</p>
+  </div>
+<% end %>
