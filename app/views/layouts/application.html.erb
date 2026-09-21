@@ -15,6 +15,8 @@
 
         <nav class="site-nav" aria-label="Hauptnavigation">
           <% if Current.user %>
+            <%= link_to "Portale", root_path, class: "site-nav__link", aria: { current: current_page?(root_path) ? "page" : nil } %>
+            <%= link_to "Meine Reservierungen", bookings_path, class: "site-nav__link", aria: { current: current_page?(bookings_path) ? "page" : nil } %>
             <span class="site-nav__user"><%= Current.user.name %></span>
             <%= button_to "Abmelden", session_path, method: :delete, class: "button button--ghost button--small" %>
           <% end %>

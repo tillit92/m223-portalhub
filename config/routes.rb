@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :portals, only: %i[ index show ] do
     resources :bookings, only: :create
   end
+  resources :bookings, only: %i[ index destroy ]
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

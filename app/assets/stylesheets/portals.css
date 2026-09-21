@@ -30,6 +30,15 @@
   font-size: var(--text-lg);
 }
 
+.portal-row__name a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.portal-row__name a:hover {
+  color: var(--accent);
+}
+
 .portal-row__meta {
   display: flex;
   flex-wrap: wrap;
@@ -194,6 +203,10 @@
 
 .empty .lead {
   margin-top: 0;
+}
+
+.empty .button {
+  margin-top: var(--space-4);
 }
 
 @media (max-width: 48rem) {

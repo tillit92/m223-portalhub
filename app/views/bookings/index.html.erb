@@ -1,0 +1,42 @@
+<% content_for :title, "Meine Reservierungen - PortalHub" %>
+
+<div class="page__header">
+  <h1 class="page__title">Meine Reservierungen</h1>
+  <p class="lead">Hier siehst du, wohin die Reise geht.</p>
+</div>
+
+<% if @bookings.present? %>
+  <ul class="portal-list">
+    <% @bookings.each do |booking| %>
+      <% portal = booking.portal %>
+      <li class="portal-row">
+        <div class="portal-row__main">
+          <h2 class="portal-row__name"><%= link_to portal.name, portal_path(portal) %></h2>
+          <p class="portal-row__meta">
+            <span class="mono"><%= portal.dimension %></span>
+            <span><%= departure_label(portal) %></span>
+          </p>
+        </div>
+
+        <div class="portal-row__seats">
+          <% if portal.departed? %>
+            <span class="tag">ABGEFLOGEN</span>
+          <% end %>
+        </div>
+
+        <% if booking.cancellable? %>
+          <%= button_to "Stornieren", booking_path(booking), method: :delete,
+                class: "button button--ghost button--small portal-row__action",
+                form: { data: { turbo_confirm: "Reservierung für #{portal.name} wirklich stornieren?" } } %>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div class="empty">
+    <%= render "shared/portal" %>
+    <p class="empty__title">Du hast noch keine Reservierung.</p>
+    <p class="lead">Such dir ein Portal aus und sichere dir deinen Platz.</p>
+    <%= link_to "Portale ansehen", root_path, class: "button" %>
+  </div>
+<% end %>

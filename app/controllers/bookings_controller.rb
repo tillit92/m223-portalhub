@@ -1,6 +1,6 @@
 class BookingsController < ApplicationController
-  # Reservieren heisst: der Fachregel im Modell folgen und ihr Ergebnis
-  # in eine verständliche Meldung übersetzen.
+  # Reserving means following the rule in the model and turning its result
+  # into a message the Traveler understands.
   MESSAGES = {
     reserved: [ :notice, "Platz reserviert. Gute Reise!" ],
     departed: [ :alert, "Dieses Portal ist schon abgeflogen." ],
@@ -9,10 +9,29 @@ class BookingsController < ApplicationController
     busy: [ :alert, "Gerade ist viel los, versuch es gleich nochmal." ]
   }.freeze
 
+  def index
+    @bookings = Current.user.bookings.eager_load(:portal).order("portals.departure_time")
+  end
+
   def create
     portal = Portal.find(params[:portal_id])
-    kind, message = MESSAGES.fetch(portal.reserve_seat_for(Current.user))
+    result = portal.reserve_seat_for(Current.user)
+    kind, message = MESSAGES.fetch(result)
 
-    redirect_to portal, kind => message
+    # A reserved seat shows up in "Meine Reservierungen"; a refusal stays on the Portal.
+    redirect_to (result == :reserved ? bookings_path : portal), kind => message
+  end
+
+  # Only the current User's own Bookings can be found here, so someone else's
+  # Booking is a plain 404.
+  def destroy
+    booking = Current.user.bookings.find(params[:id])
+
+    if booking.cancellable?
+      booking.destroy!
+      redirect_to bookings_path, notice: "Reservierung storniert."
+    else
+      redirect_to bookings_path, alert: "Dieses Portal ist schon abgeflogen. Die Reservierung bleibt bestehen."
+    end
   end
 end

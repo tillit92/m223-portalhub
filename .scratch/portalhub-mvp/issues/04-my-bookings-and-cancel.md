@@ -7,6 +7,8 @@
 **Status:** ready-for-agent
 
 - [ ] The page lists the current User's Bookings with Portal name, Dimension and departure, including those for Departed portals
+- [ ] After a successful reservation the Traveler lands on this page with "Platz reserviert" and sees the new Booking (a refused reservation stays on the Portal page)
+- [ ] The navigation links to "Portale" and "Meine Reservierungen"
 - [ ] With no Bookings it shows a designed empty state with "Du hast noch keine Reservierung." and a link to the overview
 - [ ] Cancelling asks for confirmation first, then deletes the Booking and confirms; the free count rises immediately
 - [ ] Cancelling a Booking for a Departed portal is refused with a clear message and nothing changes

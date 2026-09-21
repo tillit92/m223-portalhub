@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Freshly generated Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". Tickets 01 and 02 are done: login/logout (Rails built-in authentication, no password reset), `User` with role, `Portal` and `Booking` as data, the portal overview (root) and details page, seeds and the shared design (`app/assets/stylesheets/`). Reserving, cancelling, the admin area and the README are still open. The README is still the Rails default. The work is planned in `.scratch/portalhub-mvp/` (spec plus six tickets). The requirements live in `docs/spec.md` (German); read it before building features.
+Freshly generated Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". Tickets 01 to 04 are done: login/logout (Rails built-in authentication, no password reset), `User` with role, `Portal` and `Booking`, the portal overview (root) and details page, reserving a seat (`Portal#reserve_seat_for`, the locking core), "Meine Reservierungen" with cancelling, seeds and the shared design (`app/assets/stylesheets/`). The admin area and the README are still open. The README is still the Rails default. The work is planned in `.scratch/portalhub-mvp/` (spec plus six tickets). The requirements live in `docs/spec.md` (German); read it before building features.
 
 ## Domain (from `docs/spec.md`)
 

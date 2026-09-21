@@ -16,9 +16,12 @@ class BookingsTest < ActionDispatch::IntegrationTest
       post portal_bookings_path(portals(:night))
     end
 
-    assert_redirected_to portal_path(portals(:night))
+    assert_redirected_to bookings_path
     follow_redirect!
     assert_select ".flash--notice", /Platz reserviert/
+    assert_select "main", /Nacht-Portal/
+
+    get portal_path(portals(:night))
     assert_select "main", /Reserviert\s+1/
     assert_select "main", /Frei\s+5/
     assert users(:morty).bookings.exists?(portal: portals(:night))
