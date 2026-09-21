@@ -1,9 +1,13 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# Demo-Benutzer. Alle haben dasselbe Passwort (siehe README).
+demo_password = "wubba-lubba"
+
+[
+  { name: "Rick Sanchez", email_address: "rick@portalhub.test", role: :admin },
+  { name: "Morty Smith", email_address: "morty@portalhub.test", role: :traveler },
+  { name: "Summer Smith", email_address: "summer@portalhub.test", role: :traveler },
+  { name: "Beth Smith", email_address: "beth@portalhub.test", role: :traveler },
+  { name: "Birdperson", email_address: "birdperson@portalhub.test", role: :traveler }
+].each do |attributes|
+  user = User.find_or_initialize_by(email_address: attributes[:email_address])
+  user.update!(attributes.merge(password: demo_password))
+end

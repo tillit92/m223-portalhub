@@ -1,0 +1,148 @@
+/*
+ * The signature element: a swirling green portal built from gradients,
+ * plus the asymmetric split-screen login layout that presents it.
+ */
+
+.portal {
+  --size: min(34rem, 78vw);
+  position: relative;
+  isolation: isolate;
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 3rem var(--accent-glow));
+}
+
+.portal::before,
+.portal__swirl {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+/* Thin bright rim */
+.portal::before {
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    #8be36a,
+    #2e8a3f 16%,
+    #a9f28a 32%,
+    #1d5b2d 50%,
+    #8be36a 66%,
+    #2e8a3f 82%,
+    #8be36a
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
+  mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
+  animation: portal-spin 20s linear infinite;
+}
+
+/* Swirling arms that fade toward the rim and the core */
+.portal__swirl {
+  inset: 4%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    rgb(169 242 138 / 0.95) 0deg,
+    rgb(46 138 63 / 0.55) 22deg,
+    transparent 46deg,
+    rgb(139 227 106 / 0.8) 60deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
+  mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
+  animation: portal-spin 14s linear infinite reverse;
+}
+
+/* Dark, glowing heart of the portal */
+.portal__core {
+  position: absolute;
+  inset: 26%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #030704 0%, #071a0c 60%, rgb(139 227 106 / 0.32) 100%);
+  box-shadow: 0 0 3rem rgb(139 227 106 / 0.5), inset 0 0 3rem var(--accent-glow);
+  animation: portal-pulse 7s ease-in-out infinite;
+}
+
+@keyframes portal-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes portal-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal::before,
+  .portal__swirl,
+  .portal__core {
+    animation: none;
+  }
+}
+
+/* Login: asymmetric split screen */
+
+.auth {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  min-height: 100dvh;
+}
+
+.auth__stage {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: var(--space-8);
+  border-right: 1px solid var(--line);
+  background:
+    radial-gradient(40rem 40rem at 45% 50%, rgb(139 227 106 / 0.10), transparent 65%),
+    var(--surface);
+}
+
+.auth__stage .portal {
+  --size: min(36rem, 46vw);
+  margin-left: -6vw;
+}
+
+.auth__panel {
+  display: flex;
+  align-items: center;
+  padding: var(--space-12) clamp(1.5rem, 5vw, 4.5rem);
+}
+
+.auth__content {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.auth__title {
+  margin-top: var(--space-12);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+@media (max-width: 48rem) {
+  .auth {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .auth__stage {
+    height: 15rem;
+    padding: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .auth__stage .portal {
+    --size: 20rem;
+    margin: 4rem 0 0;
+  }
+
+  .auth__panel {
+    padding: var(--space-8) var(--space-4) var(--space-12);
+  }
+
+  .auth__title {
+    margin-top: var(--space-8);
+  }
+}
