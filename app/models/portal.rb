@@ -29,34 +29,44 @@ class Portal < ApplicationRecord
     bookings.exists?(user: user)
   end
 
-  # Die zentrale Fachregel: Ein Portal nimmt nie mehr Buchungen an, als es
-  # Plätze hat, auch wenn mehrere Reisende gleichzeitig den letzten Platz
-  # wollen (docs/adr/0002-capacity-enforced-with-portal-lock.md).
+  # Why a reservation is refused right now, or nil when a seat can be taken.
+  # The order matters: a departed Portal is refused first, whatever else holds.
+  def refusal_for(user)
+    if departed?
+      :departed
+    elsif reserved_by?(user)
+      :already_booked
+    elsif full?
+      :full
+    end
+  end
+
+  # The core rule of the project: a Portal never takes more Bookings than its
+  # Capacity, even when several Travelers grab the last seat at the same
+  # moment (docs/adr/0002-capacity-enforced-with-portal-lock.md).
   #
-  # `with_lock` öffnet eine Transaktion und lädt das Portal darin neu. Auf
-  # SQLite beginnt jede Schreibtransaktion mit BEGIN IMMEDIATE, dadurch
-  # laufen zwei Reservierungen nacheinander statt gleichzeitig. Deshalb
-  # müssen Prüfung und Buchung in genau diesem Block liegen: Erst zählen,
-  # dann buchen, alles in einer Transaktion.
+  # `with_lock` opens a transaction and reloads the Portal inside it. On SQLite
+  # every write transaction starts as BEGIN IMMEDIATE, so two reservations run
+  # one after the other instead of side by side. That is why the check and the
+  # booking must both happen in this block: count first, then book, in one
+  # transaction.
   #
-  # Gibt zurück, was passiert ist: :reserved, :departed, :already_booked,
-  # :full oder :busy. Die Meldung dazu wählt der Controller.
+  # Reports what happened: :reserved, :departed, :already_booked, :full or
+  # :busy. The controller turns that into a message.
   def reserve_seat_for(user)
     with_lock do
-      if departed?
-        :departed
-      elsif reserved_by?(user)
-        :already_booked
-      elsif bookings.count >= capacity
-        :full
+      refusal = refusal_for(user)
+
+      if refusal
+        refusal
       else
         bookings.create!(user: user)
         :reserved
       end
     end
   rescue ActiveRecord::StatementTimeout
-    # SQLite lässt nur einen Schreiber gleichzeitig zu. Wenn die Wartezeit
-    # nicht reicht, ist nichts gespeichert und der Reisende versucht es neu.
+    # SQLite allows only one writer at a time. When the wait is too long,
+    # nothing is saved and the Traveler simply tries again.
     :busy
   end
 end

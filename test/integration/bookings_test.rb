@@ -78,6 +78,15 @@ class BookingsTest < ActionDispatch::IntegrationTest
     assert_select ".flash--alert", /abgeflogen/
   end
 
+  test "a departed portal is refused even for a traveler who already has a seat there" do
+    sign_in_as users(:morty)
+
+    post portal_bookings_path(portals(:departed))
+
+    follow_redirect!
+    assert_select ".flash--alert", /abgeflogen/
+  end
+
   test "a busy database is explained instead of showing a technical error" do
     sign_in_as users(:beth)
     portal = portals(:night)

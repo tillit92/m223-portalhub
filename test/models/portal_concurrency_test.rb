@@ -1,12 +1,12 @@
 require "test_helper"
 
-# Der kritische Multiuser-Fall des Projekts: Zehn Reisende greifen im selben
-# Moment nach dem letzten freien Platz, und nur eine Reservierung darf
-# gespeichert werden (siehe docs/adr/0002-capacity-enforced-with-portal-lock.md).
+# The critical multiuser case of this project: ten Travelers grab the last free
+# seat at the same moment, and only one Booking may be stored
+# (see docs/adr/0002-capacity-enforced-with-portal-lock.md).
 #
-# Dieser Test läuft bewusst ohne die umschliessende Test-Transaktion, damit die
-# Threads wirklich auf der Datenbank konkurrieren. Jeder Thread holt sich eine
-# eigene Verbindung und ein eigenes Portal-Objekt.
+# This test deliberately runs without the wrapping test transaction so the
+# threads really compete on the database. Each thread checks out its own
+# connection and loads its own Portal object.
 class PortalConcurrencyTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
@@ -20,7 +20,7 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
     @portal = Portal.create!(name: PORTAL_NAME, dimension: "C-137",
       departure_time: 1.day.from_now, capacity: 1)
     @travelers = TRAVELERS.times.map do |index|
-      User.create!(name: "Reisender #{index}", email_address: format(EMAIL_PATTERN, index),
+      User.create!(name: "Morty C-#{132 + index}", email_address: format(EMAIL_PATTERN, index),
         password: "portal-gun-42")
     end
   end
@@ -30,9 +30,9 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
   test "ten travelers reserving the last seat at once leave exactly one booking" do
     results = reserve_at_the_same_time
 
-    assert_equal 1, results.count(:reserved), "genau eine Reservierung darf gelingen"
-    assert_equal TRAVELERS - 1, results.count(:full), "alle anderen sehen das volle Portal"
-    assert_equal 1, @portal.bookings.count, "das Portal hat genau eine Buchung"
+    assert_equal 1, results.count(:reserved), "exactly one reservation may succeed"
+    assert_equal TRAVELERS - 1, results.count(:full), "everyone else sees the full portal"
+    assert_equal 1, @portal.bookings.count, "the portal holds exactly one booking"
     assert @portal.reload.full?
   end
 
@@ -46,12 +46,15 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
     assert_equal 4, @portal.bookings.count
   end
 
-  # Der eigentliche Beweis für die Sperre. Der Test oben beschreibt zwar den
-  # geforderten Fall, trifft das schmale Zeitfenster zwischen Zählen und
-  # Buchen aber kaum je. Hier wird eine Reservierung mitten in ihrer
-  # Transaktion künstlich aufgehalten, während eine zweite es versucht.
-  # Mit Sperre muss die zweite warten und geht leer aus. Ohne Sperre würde
-  # sie sich am Zähler vorbeimogeln und denselben letzten Platz buchen.
+  # This is the actual proof of the lock. The test above describes the required
+  # scenario, but it hardly ever hits the narrow window between counting and
+  # booking: the operations are too fast. So here one reservation is held open
+  # in the middle of its transaction while a second one tries to get in. With
+  # the lock the second must wait and comes away empty handed. Without it, it
+  # would slip past the counter and book the very same last seat.
+  #
+  # The hold is shorter than the `timeout` in config/database.yml, so the
+  # waiting reservation is served instead of giving up as busy.
   test "a second reservation cannot slip into a reservation that is still running" do
     holder_is_inside = Queue.new
     slow_portal = Portal.find(@portal.id)
@@ -69,18 +72,18 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
         Portal.find(@portal.id).reserve_seat_for(@travelers.second)
       end
 
-      assert_equal :reserved, holder.value, "die erste Reservierung muss den Platz bekommen"
+      assert_equal :reserved, holder.value, "the first reservation must get the seat"
     end
 
-    assert_equal :full, second_result, "die zweite Reservierung muss warten und das volle Portal sehen"
-    assert_equal 1, @portal.bookings.count, "der letzte Platz darf nur einmal vergeben werden"
+    assert_equal :full, second_result, "the second reservation must wait and then see a full portal"
+    assert_equal 1, @portal.bookings.count, "the last seat may only be given away once"
   end
 
   private
-    # Jeder Thread holt zuerst seine eigene Verbindung und sein eigenes
-    # Portal-Objekt und meldet sich bereit. Erst wenn alle bereitstehen,
-    # fällt das Startsignal: So reservieren sie wirklich gleichzeitig und
-    # nicht nacheinander, weil der eine noch eine Verbindung sucht.
+    # Every thread first takes its own connection and its own Portal object and
+    # reports that it is ready. Only once all of them stand ready does the start
+    # signal fall, so they really reserve at the same moment instead of queueing
+    # up behind each other while one is still looking for a connection.
     def reserve_at_the_same_time
       ready = Queue.new
       go = Queue.new
@@ -100,7 +103,7 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
 
       TRAVELERS.times { ready.pop }
       TRAVELERS.times { go << :los }
-      threads.each { |thread| thread.join(30) }
+      threads.each { |thread| assert thread.join(30), "a reserving thread did not finish" }
 
       Array.new(results.size) { results.pop }
     end
