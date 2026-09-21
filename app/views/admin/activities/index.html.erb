@@ -1,0 +1,60 @@
+<% content_for :title, "Protokoll - PortalHub" %>
+
+<%= render "admin/shared/tabs", current: :activities %>
+
+<div class="page__header">
+  <h1 class="page__title">Protokoll</h1>
+  <p class="lead">Wer wann was getan hat. Die letzten <%= Admin::ActivitiesController::LIMIT %> passenden Einträge, die neuesten zuerst.</p>
+</div>
+
+<%= form_with url: admin_activities_path, method: :get, class: "filters" do |form| %>
+  <div class="field">
+    <%= form.label :aktion, "Aktion" %>
+    <%= form.select :aktion, Activity::ACTIONS.invert.to_a, { include_blank: "Alle Aktionen", selected: params[:aktion] } %>
+  </div>
+  <div class="field">
+    <%= form.label :benutzer, "Benutzer" %>
+    <%= form.select :benutzer, @users.map { |user| [ user.name, user.id ] }, { include_blank: "Alle Benutzer", selected: params[:benutzer] } %>
+  </div>
+  <div class="filters__actions">
+    <%= form.submit "Filtern", name: nil, class: "button button--ghost" %>
+    <% if params[:aktion].present? || params[:benutzer].present? %>
+      <%= link_to "Zurücksetzen", admin_activities_path, class: "button button--ghost" %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @activities.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Zeit</th>
+          <th scope="col">Wer</th>
+          <th scope="col">Aktion</th>
+          <th scope="col">Beschreibung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @activities.each do |activity| %>
+          <tr>
+            <td class="table__nowrap mono"><%= activity_time(activity) %></td>
+            <th scope="row"><%= activity.user_name || "Unbekannt" %></th>
+            <td class="table__nowrap"><span class="tag <%= "tag--full" if activity.action == "login_failed" %>"><%= activity.action_label %></span></td>
+            <td><%= activity.details %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="empty">
+    <% if params[:aktion].present? || params[:benutzer].present? %>
+      <p class="empty__title">Keine Einträge für diesen Filter.</p>
+      <p class="lead">Wähle eine andere Aktion oder setze den Filter zurück.</p>
+    <% else %>
+      <p class="empty__title">Noch nichts passiert.</p>
+      <p class="lead">Sobald jemand etwas tut, steht es hier.</p>
+    <% end %>
+  </div>
+<% end %>

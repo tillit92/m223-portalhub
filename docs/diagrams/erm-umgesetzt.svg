@@ -51,5 +51,5 @@
 
 <!-- rule -->
 <text class="n" x="40" y="462">Regel:  Anzahl BOOKING pro PORTAL  &#8804;  PORTAL.capacity      |      freie Plaetze = capacity &#8722; Anzahl Bookings</text>
-<text class="n" x="40" y="486">Umgesetzt: email_address und password_digest (Rails-Anmeldung); zusaetzlich Tabelle sessions (Anmeldung, nicht im ERM des Antrags).</text>
+<text class="n" x="40" y="486">Umgesetzt: email_address und password_digest (Rails-Anmeldung); zusaetzlich Tabellen sessions (Anmeldung) und activities (Protokoll), nicht im ERM des Antrags.</text>
 </svg>

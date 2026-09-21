@@ -1,0 +1,6 @@
+<% content_for :title, "#{@user.name_was} bearbeiten - PortalHub" %>
+
+<%= link_to admin_users_path, class: "back-link" do %>&larr; Zurück zu den Benutzern<% end %>
+
+<h1 class="page__title"><%= @user.name_was %> bearbeiten</h1>
+<%= render "form", user: @user %>

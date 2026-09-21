@@ -39,13 +39,19 @@ _Avoid_: Expired, past portal
 ## People
 
 **User**:
-Anyone who can log in. Users are created up front (seeds); there is no self-registration.
+Anyone who can log in. Users are created by an Admin (or by the seeds); there is no self-registration.
 _Avoid_: Account, member
 
 **Traveler**:
-A User who browses Portals and books and cancels their own Bookings.
+A User who browses Portals, books and cancels their own Bookings, and can change their own profile.
 _Avoid_: Passenger, customer, Reisender
 
 **Admin**:
-A User (nickname "Rick") who creates, edits and deletes Portals and can view any Booking and cancel any Booking of a Portal that has not departed. An Admin can also book like a Traveler, but cannot book for others.
+A User (nickname "Rick") who creates, edits and deletes Portals and Users, can view any Booking and cancel any Booking of a Portal that has not departed, and reads the Activity log. An Admin can also book like a Traveler, but cannot book for others, and can neither delete themself nor change their own role. The last Admin can never be demoted or deleted, whoever tries.
 _Avoid_: Rick (as a role name in code), operator, superuser
+
+## Activity log
+
+**Activity**:
+One entry of the Aktivitätsprotokoll: who did what, and when. It is written after an action has succeeded, never for a refused one, and it outlives the User and Portal it mentions (the User's name is kept as it was).
+_Avoid_: Log entry, audit, event

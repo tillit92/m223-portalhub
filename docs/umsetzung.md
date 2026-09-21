@@ -4,7 +4,7 @@ Stand: 21.09.2026. Diese Datei ergänzt [spec.md](spec.md) (Was und Warum) um de
 
 ## 1. Erreichter Stand
 
-Alle acht funktionalen Anforderungen des Antrags sind umgesetzt. Die Tests laufen vollständig durch (79 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
+Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweiterungen aus dem nächsten Abschnitt. Die Tests laufen vollständig durch (142 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
 
 | Nr. | Funktionale Anforderung | Ergebnis | Nachweis (Tests) |
 | --- | --- | --- | --- |
@@ -17,6 +17,17 @@ Alle acht funktionalen Anforderungen des Antrags sind umgesetzt. Die Tests laufe
 | 7 | Ein Administrator kann Portale erstellen, bearbeiten und löschen | erfüllt | `admin_portals_test.rb`, `admin_bookings_test.rb` |
 | 8 | Ein Portal darf seine maximale Kapazität nicht überschreiten | erfüllt | `portal_concurrency_test.rb`, `bookings_test.rb`, `admin_portals_test.rb` |
 
+### Erweiterungen nach dem Antrag
+
+Der Kompetenznachweis verlangt für eine Multi-User-Applikation weitere Funktionen, die im genehmigten Antrag nicht standen. Sie wurden nachträglich ergänzt und sind in [spec.md](spec.md) beschrieben, dort auch als Text-Breadboards. Die handgezeichneten Skizzen des Antrags (`breadboard.svg`, `wireframes.svg`) sind unverändert.
+
+| Erweiterung | Was sie tut | Nachweis (Tests) |
+| --- | --- | --- |
+| Benutzerprofil | Jeder Benutzer sieht seine Daten und ändert Name, E-Mail und Passwort (das aktuelle Passwort ist nötig, danach enden die anderen Sitzungen). | `profile_test.rb` |
+| Benutzerverwaltung | Rick legt Benutzer an, ändert Name, E-Mail, Rolle und Passwort und löscht Benutzer. Er kann sich nicht selbst löschen und seine eigene Rolle nicht ändern, und der letzte Admin kann nie herabgestuft oder gelöscht werden. Ein neues Passwort oder eine neue Rolle beendet die Sitzungen des Benutzers. | `admin_users_test.rb`, `user_test.rb` |
+| Aktivitätsprotokoll | Rick sieht, wer wann was getan hat: Anmeldungen (auch fehlgeschlagene), Reservierungen, Stornierungen, Änderungen an Portalen, Benutzern und Profilen, filterbar nach Aktion und Benutzer. Einträge bleiben nach dem Löschen eines Benutzers lesbar. | `activity_log_test.rb` |
+| Fehlerseiten | 404, 422, 500, 400 und "Browser zu alt" sind deutsch und im Design der Applikation statt der englischen Rails-Standardseiten. | `error_pages_test.rb` |
+
 ### Screens
 
 | | |
@@ -26,6 +37,9 @@ Alle acht funktionalen Anforderungen des Antrags sind umgesetzt. Die Tests laufe
 | ![Volles Portal](screenshots/05-portal-voll.png) Volles Portal: Button inaktiv | ![Reservierung bestätigt](screenshots/06-reservierung-bestaetigt.png) Nach dem Reservieren: Meldung und neue Reservierung |
 | ![Meine Reservierungen](screenshots/07-meine-reservierungen.png) Meine Reservierungen | ![Admin: Portale](screenshots/08-admin-portale.png) Admin: alle Portale |
 | ![Admin: Formularfehler](screenshots/09-admin-formular-fehler.png) Admin: Kapazität unter der Zahl der Reservierungen | ![Admin: Reservierungen](screenshots/10-admin-reservierungen.png) Admin: Reservierungen eines Portals |
+| ![Profil](screenshots/11-profil.png) Profil: Daten und Passwort ändern | ![Admin: Benutzer](screenshots/12-admin-benutzer.png) Admin: Benutzerverwaltung |
+| ![Admin: Benutzer bearbeiten](screenshots/13-admin-benutzer-formular.png) Eigenes Konto bearbeiten: die Rolle ist gesperrt | ![Admin: Protokoll](screenshots/14-admin-protokoll.png) Admin: Aktivitätsprotokoll |
+| ![Fehlerseite 404](screenshots/15-fehlerseite-404.png) Fehlerseite 404 | |
 
 Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu reservieren, erscheint auf der Detailseite. Sie ist in `bookings_test.rb` geprüft.
 
@@ -37,6 +51,7 @@ Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu reservieren, e
 | `portals` | `id`, `name`, `dimension`, `departure_time`, `capacity` |
 | `bookings` | `id`, `user_id`, `portal_id`, eindeutig pro Paar `user_id` und `portal_id` |
 | `sessions` | `id`, `user_id`, `ip_address`, `user_agent` (Anmeldung, nicht Teil des fachlichen Modells) |
+| `activities` | `id`, `user_id` (leer bei fehlgeschlagener Anmeldung und nach dem Löschen des Benutzers), `user_name` (Name zum Zeitpunkt), `action`, `details`, `created_at` (Aktivitätsprotokoll) |
 
 Beziehungen: `users` 1 zu n `bookings`, `portals` 1 zu n `bookings`. Freie Plätze werden nie gespeichert, sondern immer als Kapazität minus Anzahl Reservierungen berechnet. Diagramme: [erm.svg](diagrams/erm.svg) (Antrag) und [erm-umgesetzt.svg](diagrams/erm-umgesetzt.svg) (mit den umgesetzten Spaltennamen).
 
@@ -48,6 +63,7 @@ Die Begründungen stehen in [spec.md](spec.md), Abschnitt "Präzisierungen und A
 - **Qualitätsattribute:** Aus sechs allgemeinen Aussagen wurden fünf überprüfbare, weil die Wegleitung "sicher" oder "benutzerfreundlich" allein nicht genügen lässt.
 - **Ein Portal ist ein einmaliger Abflug** mit Datum und Uhrzeit, keine wiederkehrende Verbindung ([ADR-0001](adr/0001-portal-is-a-one-off-departure.md)). Die Wireframes zeigen der Kürze halber nur die Uhrzeit.
 - **Fehlende Berechtigung:** Ein Reisender, der eine Admin-Seite aufruft, wird auf die Startseite geleitet und sieht dort "Berechtigung fehlt." statt einer eigenen Fehlerseite.
+- **Erweiterungen:** Benutzerprofil, Benutzerverwaltung, Aktivitätsprotokoll und deutsche Fehlerseiten kamen nach dem Antrag dazu, weil der Kompetenznachweis sie verlangt (siehe oben).
 - **Mobile Ansicht** ist kein Ziel. Die Applikation ist für den Desktop-Browser gebaut, einfache einspaltige Fallbacks sind vorhanden, aber nicht geprüft.
 - **Sperre bei der Kapazitätsänderung:** Sie läuft wie beim Reservieren unter `Portal#with_lock`. Auf SQLite ist die explizite Sperre dort allerdings redundant, weil `save` bereits eine eigene Schreibtransaktion um die Validierung öffnet (Begründung und Konsequenz in [ADR-0002](adr/0002-capacity-enforced-with-portal-lock.md)). Beim Reservieren ist sie dagegen zwingend nötig.
 
@@ -66,7 +82,7 @@ Anforderung: Versuchen zehn Reisende gleichzeitig, den letzten freien Platz zu r
 
 Anforderung: Ein Reisender, der eine Admin-Seite aufruft, sieht "Berechtigung fehlt" und verändert nichts. Ein nicht angemeldeter Benutzer wird zum Login geleitet und kann nicht reservieren.
 
-- `test/integration/admin_access_test.rb` ruft **alle acht** Admin-Endpunkte (Liste, neu, anlegen, bearbeiten, ändern, löschen, Reservierungen ansehen, Reservierung stornieren) als Besucher und als Reisender auf und vergleicht vorher und nachher den Datenbestand: Es ändert sich nichts. Der Admin kommt auf alle Seiten.
+- `test/integration/admin_access_test.rb` ruft **alle 15** Admin-Endpunkte (Portale: Liste, neu, anlegen, bearbeiten, ändern, löschen, Reservierungen ansehen, Reservierung stornieren; Protokoll; Benutzer: Liste, neu, anlegen, bearbeiten, ändern, löschen) als Besucher und als Reisender auf und vergleicht vorher und nachher den Datenbestand: Es ändert sich nichts. Der Admin kommt auf alle Seiten.
 - Besucher werden auch bei Reservieren, "Meine Reservierungen" und Stornieren zum Login geleitet (`bookings_test.rb`, `my_bookings_test.rb`).
 - Fremde Reservierungen sind für Reisende ein 404, auch für Rick über den Reisenden-Weg. Beim Reservieren wird eine mitgeschickte fremde `user_id` ignoriert.
 
@@ -91,7 +107,7 @@ Anforderung: Login, Portalübersicht, Reservierung und Stornierung funktionieren
 
 | Browser | Ergebnis |
 | --- | --- |
-| Brave 152 (Chromium, interaktiv) | **15 von 15 Prüfungen bestanden** (`node script/browser_check.mjs`, gesteuert über das DevTools-Protokoll, mit echtem JavaScript): Reservieren mit Weiterleitung und Meldung, Stornieren und Löschen mit den **echten Bestätigungsdialogen** (Abbrechen löscht nichts, Bestätigen löscht, der Dialog nennt Portal und Anzahl Reservierungen), Abweisung eines Reisenden im Admin-Bereich, keine JavaScript-Fehler in der Konsole. Brave nutzt dieselbe Engine wie Chrome. Chrome selbst wurde damit nicht getestet. |
+| Brave 152 (Chromium, interaktiv) | **20 von 20 Prüfungen bestanden** (`node script/browser_check.mjs`, gesteuert über das DevTools-Protokoll, mit echtem JavaScript): Reservieren mit Weiterleitung und Meldung, Stornieren und Löschen mit den **echten Bestätigungsdialogen** (Abbrechen löscht nichts, Bestätigen löscht, der Dialog nennt Portal und Anzahl Reservierungen), Abweisung eines Reisenden im Admin-Bereich, Benutzerverwaltung mit Lösch-Dialog, Profil und Protokoll, keine JavaScript-Fehler in der Konsole. Brave nutzt dieselbe Engine wie Chrome. Chrome selbst wurde damit nicht getestet. |
 | Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Dazu kommen die Integrationstests, das sind aber keine Browsertests. |
 | Firefox | **Nicht geprüft.** Auf dem Entwicklungsrechner ist Firefox nicht installiert. |
 | Safari | **Nicht geprüft.** Safari ist auf dem Entwicklungsrechner vorhanden, die automatische Steuerung ist aber ausgeschaltet (Versuch mit `safaridriver`: "Allow remote automation" in den Safari-Einstellungen unter "Entwickler" ist nicht aktiviert). Die Einstellung wurde bewusst nicht verändert. |

@@ -1,0 +1,6 @@
+<% content_for :title, "Neuer Benutzer - PortalHub" %>
+
+<%= link_to admin_users_path, class: "back-link" do %>&larr; Zurück zu den Benutzern<% end %>
+
+<h1 class="page__title">Neuer Benutzer</h1>
+<%= render "form", user: @user %>

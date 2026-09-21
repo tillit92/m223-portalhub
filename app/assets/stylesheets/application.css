@@ -353,6 +353,11 @@ a {
   font-size: var(--text-sm);
 }
 
+.field__hint {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
 .form--wide {
   max-width: 32rem;
 }
@@ -422,6 +427,73 @@ a {
 .table .tag {
   margin-left: var(--space-2);
   line-height: 1.5rem;
+}
+
+/* Profile: two forms side by side on wide screens */
+
+.profile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 32rem));
+  gap: var(--space-12);
+}
+
+.section-title {
+  font-size: var(--text-lg);
+}
+
+.lead .tag {
+  vertical-align: middle;
+}
+
+@media (max-width: 64rem) {
+  .profile {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Navigation inside the admin area */
+
+.admin-tabs {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-tabs a {
+  padding: var(--space-3) 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.admin-tabs a:hover,
+.admin-tabs a[aria-current="page"] {
+  color: var(--text);
+}
+
+.admin-tabs a[aria-current="page"] {
+  border-bottom-color: var(--accent);
+}
+
+/* Filters above a table */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.filters .field {
+  min-width: 14rem;
+}
+
+.filters__actions {
+  display: flex;
+  gap: var(--space-2);
 }
 
 /* Flash messages */

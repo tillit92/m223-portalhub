@@ -1,0 +1,6 @@
+<%# Navigation between the parts of the admin area. `current` is the tab that is open. %>
+<nav class="admin-tabs" aria-label="Admin-Bereich">
+  <%= link_to "Portale", admin_portals_path, aria: { current: ("page" if current == :portals) } %>
+  <%= link_to "Benutzer", admin_users_path, aria: { current: ("page" if current == :users) } %>
+  <%= link_to "Protokoll", admin_activities_path, aria: { current: ("page" if current == :activities) } %>
+</nav>

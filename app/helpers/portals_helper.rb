@@ -14,15 +14,7 @@ module PortalsHelper
     end
   end
 
-  # Names the consequence before a Portal with Bookings is deleted.
   def delete_portal_prompt(portal)
-    count = portal.booked_seats
-    prompt = "Portal #{portal.name} wirklich löschen?"
-
-    case count
-    when 0 then "#{prompt} Es gibt 0 Reservierungen."
-    when 1 then "#{prompt} Es gibt 1 Reservierung. Sie wird mit gelöscht."
-    else "#{prompt} Es gibt #{count} Reservierungen. Sie werden mit gelöscht."
-    end
+    delete_confirmation("Portal #{portal.name}", portal.booked_seats)
   end
 end

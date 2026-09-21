@@ -11,6 +11,7 @@ class Admin::BookingsController < Admin::BaseController
 
     if booking.cancellable?
       booking.destroy!
+      Activity.record("booking_cancelled", "hat die Reservierung von #{booking.user.name} im Portal #{@portal.name} storniert")
       redirect_to admin_portal_bookings_path(@portal), notice: "Reservierung storniert."
     else
       redirect_to admin_portal_bookings_path(@portal), alert: Booking::CANCEL_REFUSED_MESSAGE

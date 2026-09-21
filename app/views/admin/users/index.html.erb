@@ -1,0 +1,47 @@
+<% content_for :title, "Benutzer - PortalHub" %>
+
+<%= render "admin/shared/tabs", current: :users %>
+
+<div class="page__header page__header--split">
+  <div>
+    <h1 class="page__title">Benutzer</h1>
+    <p class="lead">Alle Konten. Neue Reisende und Admins legt Rick hier an.</p>
+  </div>
+  <%= link_to "+ Neuer Benutzer", new_admin_user_path, class: "button" %>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">E-Mail</th>
+        <th scope="col">Rolle</th>
+        <th scope="col" class="table__number">Reservierungen</th>
+        <th scope="col"><span class="visually-hidden">Aktionen</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <th scope="row"><%= user.name %></th>
+          <td class="mono"><%= user.email_address %></td>
+          <td><span class="tag"><%= role_label(user.role) %></span></td>
+          <td class="table__number mono"><%= user.bookings.size %></td>
+          <td>
+            <div class="table__actions">
+              <%= link_to "Bearbeiten", edit_admin_user_path(user), class: "button button--ghost button--small" %>
+              <% if user == Current.user %>
+                <span class="field__hint">Das bist du</span>
+              <% else %>
+                <%= button_to "Löschen", admin_user_path(user), method: :delete,
+                      class: "button button--ghost button--small button--danger",
+                      form: { data: { turbo_confirm: delete_user_prompt(user) } } %>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
