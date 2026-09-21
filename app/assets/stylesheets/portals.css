@@ -153,6 +153,22 @@
   --size: min(26rem, 90%);
 }
 
+.detail__action {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.note {
+  color: var(--text-muted);
+}
+
+.note--good {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* Empty state */
 
 .empty {

@@ -17,3 +17,15 @@ summer:
   email_address: summer@portalhub.test
   password_digest: <%= password_digest %>
   role: traveler
+
+beth:
+  name: Beth Smith
+  email_address: beth@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler
+
+birdperson:
+  name: Birdperson
+  email_address: birdperson@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler

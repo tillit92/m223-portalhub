@@ -37,6 +37,19 @@
     </dl>
 
     <%= seat_pips(@portal) %>
+
+    <div class="detail__action">
+      <% if @portal.departed? %>
+        <p class="note">Dieses Portal ist schon abgeflogen.</p>
+      <% elsif @portal.reserved_by?(Current.user) %>
+        <p class="note note--good">Dein Platz ist reserviert.</p>
+      <% else %>
+        <%= button_to "Platz reservieren", portal_bookings_path(@portal), class: "button", disabled: @portal.full? %>
+        <% if @portal.full? %>
+          <p class="note">Kein Platz mehr frei. Versuch eine andere Dimension.</p>
+        <% end %>
+      <% end %>
+    </div>
   </div>
 
   <div class="detail__stage">
