@@ -23,7 +23,7 @@ Multiuser app where travelers reserve a seat on a portal to another dimension. T
 - Full local CI: `bin/ci` (defined in `config/ci.rb`: setup, rubocop, bundler-audit, importmap audit, brakeman, `rails test`, seed replant)
 - Tests: `bin/rails test`
 - Single test file / line: `bin/rails test test/models/foo_test.rb` / `bin/rails test test/models/foo_test.rb:12`
-- System tests (Capybara + Selenium, run separately in GitHub CI, not part of `bin/ci`): `bin/rails test:system`
+- System tests: there are none (out of scope, see `.scratch/portalhub-mvp/spec.md`), so `bin/rails test:system` fails and the GitHub workflow has no such job. Browser behaviour is covered by `script/browser_check.mjs`.
 - Browser check with real JavaScript (Turbo confirm dialogs): `node script/browser_check.mjs` (Node 22+, a Chromium browser, running dev server; it changes dev data, run `bin/rails db:seed` afterwards)
 - Lint: `bin/rubocop` (rubocop-rails-omakase, config in `.rubocop.yml`); autofix with `bin/rubocop -a`
 - Security: `bin/brakeman`, `bin/bundler-audit`, `bin/importmap audit`
