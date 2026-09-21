@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     resources :bookings, only: :create
   end
   resources :bookings, only: %i[ index destroy ]
+  resource :profile, only: %i[ show update ] do
+    patch :password
+  end
 
   namespace :admin do
     resources :portals, except: :show do

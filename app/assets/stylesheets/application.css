@@ -424,6 +424,28 @@ a {
   line-height: 1.5rem;
 }
 
+/* Profile: two forms side by side on wide screens */
+
+.profile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 32rem));
+  gap: var(--space-12);
+}
+
+.section-title {
+  font-size: var(--text-lg);
+}
+
+.lead .tag {
+  vertical-align: middle;
+}
+
+@media (max-width: 64rem) {
+  .profile {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Navigation inside the admin area */
 
 .admin-tabs {

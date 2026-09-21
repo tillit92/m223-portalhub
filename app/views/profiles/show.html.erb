@@ -1,0 +1,33 @@
+<% content_for :title, "Profil - PortalHub" %>
+
+<div class="page__header">
+  <h1 class="page__title">Profil</h1>
+  <p class="lead">
+    Angemeldet als <span class="tag"><%= @user.admin? ? "Admin" : "Reisender" %></span>
+  </p>
+</div>
+
+<div class="profile">
+  <section aria-labelledby="profile-data">
+    <h2 id="profile-data" class="section-title">Deine Daten</h2>
+    <%= form_with model: @user, url: profile_path, method: :patch, scope: :user, class: "form form--wide" do |form| %>
+      <%= render "shared/field", form: form, record: @user, attribute: :name, label: "Name", kind: :text_field, options: { autocomplete: "name" } %>
+      <%= render "shared/field", form: form, record: @user, attribute: :email_address, label: "E-Mail", kind: :email_field, options: { autocomplete: "username" } %>
+      <div class="form__actions">
+        <%= form.submit "Speichern", class: "button" %>
+      </div>
+    <% end %>
+  </section>
+
+  <section aria-labelledby="profile-password">
+    <h2 id="profile-password" class="section-title">Passwort ändern</h2>
+    <%= form_with model: @user, url: password_profile_path, method: :patch, scope: :user, class: "form form--wide" do |form| %>
+      <%= render "shared/field", form: form, record: @user, attribute: :current_password, label: "Aktuelles Passwort", kind: :password_field, options: { autocomplete: "current-password" } %>
+      <%= render "shared/field", form: form, record: @user, attribute: :password, label: "Neues Passwort (mindestens 8 Zeichen)", kind: :password_field, options: { autocomplete: "new-password", minlength: 8 } %>
+      <%= render "shared/field", form: form, record: @user, attribute: :password_confirmation, label: "Neues Passwort wiederholen", kind: :password_field, options: { autocomplete: "new-password" } %>
+      <div class="form__actions">
+        <%= form.submit "Passwort ändern", class: "button button--ghost" %>
+      </div>
+    <% end %>
+  </section>
+</div>

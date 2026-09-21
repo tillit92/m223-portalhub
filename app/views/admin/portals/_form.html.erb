@@ -3,10 +3,10 @@
     <div class="flash flash--alert" role="alert"><%= message %></div>
   <% end %>
 
-  <%= render "field", form: form, portal: portal, attribute: :name, label: "Name", kind: :text_field %>
-  <%= render "field", form: form, portal: portal, attribute: :dimension, label: "Dimension", kind: :text_field %>
-  <%= render "field", form: form, portal: portal, attribute: :departure_time, label: "Abflugzeit", kind: :datetime_local_field %>
-  <%= render "field", form: form, portal: portal, attribute: :capacity, label: "Kapazität", kind: :number_field, options: { min: 1 } %>
+  <%= render "shared/field", form: form, record: portal, attribute: :name, label: "Name", kind: :text_field %>
+  <%= render "shared/field", form: form, record: portal, attribute: :dimension, label: "Dimension", kind: :text_field %>
+  <%= render "shared/field", form: form, record: portal, attribute: :departure_time, label: "Abflugzeit", kind: :datetime_local_field %>
+  <%= render "shared/field", form: form, record: portal, attribute: :capacity, label: "Kapazität", kind: :number_field, options: { min: 1 } %>
 
   <div class="form__actions">
     <%= form.submit "Speichern", class: "button" %>
