@@ -3,7 +3,7 @@
 class ProfilesController < ApplicationController
   before_action :set_user
 
-  LABELS = { "name" => "Name", "email_address" => "E-Mail" }.freeze
+  LABELS = { "name" => "Name", "email_address" => "E-Mail", "avatar" => "Bild" }.freeze
 
   def show
   end
@@ -41,7 +41,7 @@ class ProfilesController < ApplicationController
     end
 
     def profile_params
-      params.expect(user: %i[ name email_address ])
+      params.expect(user: %i[ name email_address avatar ])
     end
 
     def password_params

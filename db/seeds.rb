@@ -2,11 +2,11 @@
 demo_password = "wubba-lubba"
 
 users = {
-  rick: { name: "Rick Sanchez", email_address: "rick@portalhub.test", role: :admin },
-  morty: { name: "Morty Smith", email_address: "morty@portalhub.test", role: :traveler },
-  summer: { name: "Summer Smith", email_address: "summer@portalhub.test", role: :traveler },
-  beth: { name: "Beth Smith", email_address: "beth@portalhub.test", role: :traveler },
-  birdperson: { name: "Birdperson", email_address: "birdperson@portalhub.test", role: :traveler }
+  rick: { name: "Rick Sanchez", email_address: "rick@portalhub.test", role: :admin, avatar: "rick" },
+  morty: { name: "Morty Smith", email_address: "morty@portalhub.test", role: :traveler, avatar: "morty" },
+  summer: { name: "Summer Smith", email_address: "summer@portalhub.test", role: :traveler, avatar: "summer" },
+  beth: { name: "Beth Smith", email_address: "beth@portalhub.test", role: :traveler, avatar: "beth" },
+  birdperson: { name: "Birdperson", email_address: "birdperson@portalhub.test", role: :traveler, avatar: "birdperson" }
 }.transform_values do |attributes|
   user = User.find_or_initialize_by(email_address: attributes[:email_address])
   user.update!(attributes.merge(password: demo_password))

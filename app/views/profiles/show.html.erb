@@ -13,6 +13,7 @@
     <%= form_with model: @user, url: profile_path, method: :patch, scope: :user, class: "form form--wide" do |form| %>
       <%= render "shared/field", form: form, record: @user, attribute: :name, label: "Name", kind: :text_field, options: { autocomplete: "name" } %>
       <%= render "shared/field", form: form, record: @user, attribute: :email_address, label: "E-Mail", kind: :email_field, options: { autocomplete: "username" } %>
+      <%= render "shared/avatar_picker", form: form, record: @user %>
       <div class="form__actions">
         <%= form.submit "Speichern", class: "button" %>
       </div>

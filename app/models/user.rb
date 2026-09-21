@@ -3,9 +3,16 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
+  # A fixed set of pictures that ship with the app (app/assets/images/<key>.png).
+  # Nobody uploads anything; a User picks one of these, or none.
+  AVATARS = { "rick" => "Rick", "morty" => "Morty", "summer" => "Summer", "beth" => "Beth", "birdperson" => "Birdperson" }.freeze
+
   enum :role, { traveler: "traveler", admin: "admin" }, default: :traveler, validate: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
+
+  before_validation { self.avatar = nil if avatar.blank? }
+  validates :avatar, inclusion: { in: AVATARS.keys, message: "ist nicht erlaubt" }, allow_nil: true
 
   validates :name, presence: { message: "bitte ausfüllen" }
   validates :email_address, presence: { message: "bitte ausfüllen" }, uniqueness: { message: "wird schon verwendet" }

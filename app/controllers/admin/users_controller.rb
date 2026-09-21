@@ -1,7 +1,7 @@
 class Admin::UsersController < Admin::BaseController
   before_action :set_user, only: %i[ edit update destroy ]
 
-  LABELS = { "name" => "Name", "email_address" => "E-Mail" }.freeze
+  LABELS = { "name" => "Name", "email_address" => "E-Mail", "avatar" => "Bild" }.freeze
 
   def index
     @users = User.includes(:bookings).order(:name)
@@ -63,7 +63,7 @@ class Admin::UsersController < Admin::BaseController
     end
 
     def user_params
-      params.expect(user: %i[ name email_address role password ])
+      params.expect(user: %i[ name email_address role password avatar ])
     end
 
     # The Admin keeps their own role, so the acting Admin is always still one.

@@ -5,12 +5,14 @@ rick:
   email_address: rick@portalhub.test
   password_digest: <%= password_digest %>
   role: admin
+  avatar: rick
 
 morty:
   name: Morty Smith
   email_address: morty@portalhub.test
   password_digest: <%= password_digest %>
   role: traveler
+  avatar: morty
 
 summer:
   name: Summer Smith

@@ -3,6 +3,8 @@
   <%= render "shared/field", form: form, record: user, attribute: :name, label: "Name", kind: :text_field %>
   <%= render "shared/field", form: form, record: user, attribute: :email_address, label: "E-Mail", kind: :email_field %>
 
+  <%= render "shared/avatar_picker", form: form, record: user %>
+
   <div class="field <%= "field--error" if user.errors[:role].any? %>">
     <%= form.label :role, "Rolle" %>
     <%= form.select :role, User.roles.keys.map { |role| [ role_label(role), role ] }, {}, disabled: own_account, aria: { invalid: user.errors[:role].any?.presence } %>

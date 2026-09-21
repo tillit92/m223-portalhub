@@ -42,6 +42,10 @@ _Avoid_: Expired, past portal
 Anyone who can log in. Users are created by an Admin (or by the seeds); there is no self-registration.
 _Avoid_: Account, member
 
+**Avatar**:
+One of a fixed set of pictures that ship with the app (Rick, Morty, Summer, Beth, Birdperson) that a User can pick for themself, or none. Nobody uploads pictures; without one the User's initials show.
+_Avoid_: Profile picture, upload, image
+
 **Traveler**:
 A User who browses Portals, books and cancels their own Bookings, and can change their own profile.
 _Avoid_: Passenger, customer, Reisender
