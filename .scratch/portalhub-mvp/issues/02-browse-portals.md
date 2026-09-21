@@ -7,7 +7,8 @@
 **Status:** ready-for-agent
 
 - [ ] A Portal has a name, a Dimension, a departure (date and time) and a Capacity
-- [ ] Seeds add a handful of Portals with varying Capacity, including one Full portal and one Departed portal
+- [ ] A Booking (one User, one Portal) exists as data, with a database-level guarantee of at most one Booking per User and Portal; creating Bookings through the app comes in ticket 03
+- [ ] Seeds add a handful of Portals with varying Capacity and some Bookings, including one Full portal and one Departed portal
 - [ ] The overview is the home page after login, lists non-departed Portals with the soonest first, and shows "X von Y Plätzen frei" for each
 - [ ] Rows are separated by dividers instead of three identical cards; the seat pips show real state (booked vs. free) and the free count is correct on every load
 - [ ] A Full portal shows "AUSGEBUCHT"; a Departed portal does not appear for Travelers

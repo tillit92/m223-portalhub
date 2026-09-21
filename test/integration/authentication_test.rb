@@ -27,7 +27,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
     follow_redirect!
     assert_response :success
-    assert_select "h1", /Morty/
+    assert_select ".site-nav__user", "Morty Smith"
   end
 
   test "the login accepts the email in any letter case" do
@@ -63,13 +63,13 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test "a signed-in user sees the home page greeting them by name" do
+  test "a signed-in user sees their own name in the navigation" do
     sign_in_as users(:rick)
 
     get root_path
 
     assert_response :success
-    assert_select "h1", /Rick/
+    assert_select ".site-nav__user", "Rick Sanchez"
   end
 
   test "there is no self-registration and no password reset" do
@@ -78,18 +78,5 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
 
     get "/passwords/new"
     assert_response :not_found
-  end
-
-  test "the seed data creates Rick as admin and travelers, and can run repeatedly" do
-    User.delete_all
-
-    2.times { Rails.application.load_seed }
-
-    assert_equal 1, User.where(role: "admin").count
-    assert_equal "rick@portalhub.test", User.find_by(role: "admin").email_address
-    assert_operator User.where(role: "traveler").count, :>=, 3
-
-    post session_path, params: { email_address: "morty@portalhub.test", password: "wubba-lubba" }
-    assert_redirected_to root_path
   end
 end

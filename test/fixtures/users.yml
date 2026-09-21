@@ -11,3 +11,9 @@ morty:
   email_address: morty@portalhub.test
   password_digest: <%= password_digest %>
   role: traveler
+
+summer:
+  name: Summer Smith
+  email_address: summer@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler

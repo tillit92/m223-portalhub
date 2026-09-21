@@ -1,0 +1,45 @@
+<% content_for :title, "#{@portal.name} - PortalHub" %>
+
+<%= link_to root_path, class: "back-link" do %>&larr; Zurück zur Übersicht<% end %>
+
+<div class="detail">
+  <div class="detail__info">
+    <h1 class="page__title"><%= @portal.name %></h1>
+
+    <% if @portal.full? || @portal.departed? %>
+      <p class="detail__tags">
+        <% if @portal.departed? %><span class="tag">ABGEFLOGEN</span><% end %>
+        <% if @portal.full? %><span class="tag tag--full">AUSGEBUCHT</span><% end %>
+      </p>
+    <% end %>
+
+    <dl class="facts">
+      <div class="facts__item">
+        <dt>Dimension</dt>
+        <dd class="mono"><%= @portal.dimension %></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Abflug</dt>
+        <dd><%= departure_label(@portal) %></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Kapazität</dt>
+        <dd class="mono"><%= @portal.capacity %></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Reserviert</dt>
+        <dd class="mono"><%= @portal.booked_seats %></dd>
+      </div>
+      <div class="facts__item">
+        <dt>Frei</dt>
+        <dd class="mono"><%= [ @portal.free_seats, 0 ].max %></dd>
+      </div>
+    </dl>
+
+    <%= seat_pips(@portal) %>
+  </div>
+
+  <div class="detail__stage">
+    <%= render "shared/portal" %>
+  </div>
+</div>

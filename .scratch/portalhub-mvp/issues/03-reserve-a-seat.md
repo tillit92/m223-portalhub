@@ -6,7 +6,6 @@
 
 **Status:** ready-for-agent
 
-- [ ] A Booking links one User to one Portal, with a database-level guarantee of at most one Booking per User and Portal
 - [ ] Reserving takes the Portal lock, recounts free seats inside the transaction and creates the Booking only if a seat is free
 - [ ] Success shows "Platz reserviert" and the seat pips and free count update for everyone
 - [ ] A Full portal shows 0 free seats and a disabled reserve button; a forced attempt shows "Portal voll! Dieses Portal hat bereits seine maximale Kapazität erreicht. Versuch es mit einer anderen Dimension, Morty!" and saves nothing
