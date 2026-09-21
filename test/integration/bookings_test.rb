@@ -48,6 +48,7 @@ class BookingsTest < ActionDispatch::IntegrationTest
       post portal_bookings_path(portals(:soon))
     end
 
+    assert_redirected_to portal_path(portals(:soon))
     follow_redirect!
     assert_select ".flash--alert", /Du hast bereits einen Platz in diesem Portal/
   end
@@ -63,6 +64,7 @@ class BookingsTest < ActionDispatch::IntegrationTest
       post portal_bookings_path(portals(:full))
     end
 
+    assert_redirected_to portal_path(portals(:full))
     follow_redirect!
     assert_select ".flash--alert", /Portal voll! Dieses Portal hat bereits seine maximale Kapazität erreicht\. Versuch es mit einer anderen Dimension, Morty!/
   end
@@ -77,6 +79,7 @@ class BookingsTest < ActionDispatch::IntegrationTest
       post portal_bookings_path(portals(:departed))
     end
 
+    assert_redirected_to portal_path(portals(:departed))
     follow_redirect!
     assert_select ".flash--alert", /abgeflogen/
   end
@@ -86,6 +89,7 @@ class BookingsTest < ActionDispatch::IntegrationTest
 
     post portal_bookings_path(portals(:departed))
 
+    assert_redirected_to portal_path(portals(:departed))
     follow_redirect!
     assert_select ".flash--alert", /abgeflogen/
   end

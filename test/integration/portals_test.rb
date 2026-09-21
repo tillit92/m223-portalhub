@@ -135,11 +135,4 @@ class PortalsTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
-
-  private
-    def assert_row(name, *patterns)
-      row = css_select("main li").find { |item| item.at_css("h2").text.strip == name }
-      assert row, "expected a row for #{name}"
-      patterns.each { |pattern| assert_match pattern, row.text }
-    end
 end

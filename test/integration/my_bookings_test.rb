@@ -31,11 +31,12 @@ class MyBookingsTest < ActionDispatch::IntegrationTest
   end
 
   test "the page never shows other travelers' bookings" do
-    sign_in_as users(:beth)
+    Booking.create!(user: users(:beth), portal: portals(:night))
+    sign_in_as users(:morty)
 
     get bookings_path
 
-    assert_select "main h2", text: /Portal/, count: 0
+    assert_select "main h2", text: "Nacht-Portal", count: 0
   end
 
   test "without bookings the page shows an empty state with a way back" do
@@ -55,12 +56,13 @@ class MyBookingsTest < ActionDispatch::IntegrationTest
     assert_select ".site-nav a[href=?]", bookings_path, text: /Meine Reservierungen/
   end
 
-  test "every cancellable booking asks for confirmation first" do
+  test "the cancel buttons carry a confirmation prompt that names the portal" do
     sign_in_as users(:morty)
 
     get bookings_path
 
     assert_select "form[data-turbo-confirm]", 2
+    assert_select "form[action=?][data-turbo-confirm*=?]", booking_path(bookings(:morty_soon)), "Morgen-Portal"
   end
 
   test "cancelling deletes the booking, confirms it and frees the seat for everyone" do
@@ -114,7 +116,7 @@ class MyBookingsTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "the admin cancels through the admin area only, not through someone's booking list" do
+  test "the admin cannot cancel someone else's booking through the traveler route" do
     sign_in_as users(:rick)
 
     assert_no_difference "Booking.count" do
@@ -123,11 +125,4 @@ class MyBookingsTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
-
-  private
-    def assert_row(name, *patterns)
-      row = css_select("main li").find { |item| item.at_css("h2").text.strip == name }
-      assert row, "expected a row for #{name}"
-      patterns.each { |pattern| assert_match pattern, row.text }
-    end
 end

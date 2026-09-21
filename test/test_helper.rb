@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require_relative "test_helpers/session_test_helper"
+require_relative "test_helpers/row_test_helper"
 
 # Minitest 6 no longer ships stubbing helpers. Replaces one method on one
 # object while the block runs and puts the original back afterwards.

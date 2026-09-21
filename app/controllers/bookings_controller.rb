@@ -19,7 +19,11 @@ class BookingsController < ApplicationController
     kind, message = MESSAGES.fetch(result)
 
     # A reserved seat shows up in "Meine Reservierungen"; a refusal stays on the Portal.
-    redirect_to (result == :reserved ? bookings_path : portal), kind => message
+    if result == :reserved
+      redirect_to bookings_path, kind => message
+    else
+      redirect_to portal, kind => message
+    end
   end
 
   # Only the current User's own Bookings can be found here, so someone else's
