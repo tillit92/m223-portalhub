@@ -1,6 +1,9 @@
 # One line of the Aktivitätsprotokoll: who did what, and when. Written by the
 # controllers after an action has succeeded; a refused action writes nothing.
 class Activity < ApplicationRecord
+  include LiveUpdates
+  refreshes_pages_on "activities"
+
   ACTIONS = {
     "login" => "Anmeldung",
     "login_failed" => "Anmeldung fehlgeschlagen",

@@ -1,4 +1,7 @@
 class Portal < ApplicationRecord
+  include LiveUpdates
+  refreshes_pages_on "portals"
+
   # Shown when SQLite is busy and the write had to give up (see ADR-0002).
   BUSY_MESSAGE = "Gerade ist viel los, versuch es gleich nochmal.".freeze
 

@@ -1,4 +1,7 @@
 class Booking < ApplicationRecord
+  include LiveUpdates
+  refreshes_pages_on "portals"
+
   belongs_to :user
   belongs_to :portal
 

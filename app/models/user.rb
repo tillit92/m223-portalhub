@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  include LiveUpdates
+  refreshes_pages_on "users"
+
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :bookings, dependent: :destroy
