@@ -74,6 +74,8 @@ bin/rails test test/integration/admin_access_test.rb:6  # ein einzelner Test (Da
 bin/ci                                                  # alles wie in der Abgabe: Style, Sicherheit, Tests, Seeds
 ```
 
+Die Bestätigungsdialoge (Stornieren, Löschen) brauchen echtes JavaScript und lassen sich deshalb nicht mit Rails-Tests prüfen. Dafür gibt es `node script/browser_check.mjs` (Node 22 oder neuer, ein Chromium-Browser wie Brave oder Chrome, laufender Server). Der Test verändert die Entwicklungsdaten, danach `bin/rails db:seed` ausführen. Details im Kopf des Skripts.
+
 Die Tests prüfen die zentrale Fachregel (nie mehr Reservierungen als Plätze, auch bei gleichzeitigen Anfragen) sowie erlaubte und verweigerte Zugriffe für Besucher, Reisende und Admin. Wie die Sperre funktioniert und was die Tests beweisen, steht in [docs/adr/0002-capacity-enforced-with-portal-lock.md](docs/adr/0002-capacity-enforced-with-portal-lock.md).
 
 ## Weitere Dokumentation
