@@ -121,7 +121,7 @@ Every screen, the admin area included, follows the `design-taste-frontend` skill
 - **Shape and feel:** one radius scale for the whole app. Buttons and links have hover, active (small press) and focus states. Motion is CSS only and short.
 - **States and forms:** designed empty, error, success and disabled states. Labels sit above inputs, errors below, never placeholder-as-label.
 - **Accessibility:** WCAG AA contrast for text, buttons, inputs and messages; motion respects reduced-motion preferences.
-- **Responsive:** single column below tablet width, navigation stays on one line or collapses cleanly, no horizontal scrolling.
+- **Responsive:** not a goal. The app is built for a desktop browser (that is where it is demonstrated). The existing single-column fallbacks may stay, but phone width is not tested and not a criterion.
 - **Copy:** German, short, with a light Rick and Morty tone. No em-dashes (use a plain hyphen), no marketing filler words, no fake-perfect demo numbers, and creative Rick and Morty style names for demo Users and Portals instead of "Test User".
 
 ## Testing Decisions

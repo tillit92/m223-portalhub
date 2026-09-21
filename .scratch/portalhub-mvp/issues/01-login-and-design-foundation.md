@@ -13,6 +13,6 @@
 - [ ] No password reset and no self-registration
 - [ ] Time zone is Swiss time for display and input, stored as UTC
 - [ ] The design foundation from the spec's "Design direction" exists as shared styles and layout: dark theme, colors as variables, self-hosted fonts, one radius scale, one-line navigation, flash messages, form and button styles with hover/active/error states
-- [ ] The login page is a split screen with the animated portal on one side and the form on the other; it works at phone width
+- [ ] The login page is a split screen with the animated portal on one side and the form on the other
 - [ ] A short design read (one line) is stated before the styling work, as the design skill requires
 - [ ] Integration tests cover login, wrong credentials, logout and the redirect for protected pages
