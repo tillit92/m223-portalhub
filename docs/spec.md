@@ -81,7 +81,7 @@ Ein Portal hat eine maximale Kapazität (z.B. 5 Reisende) – nicht mehr Persone
 
 **Beziehungen:** USER 1—n BOOKING, PORTAL 1—n BOOKING
 
-Zusätzlich gibt es die Tabelle `sessions` (angemeldete Benutzer, vom Rails-Authentifizierungsgenerator). Sie gehört nicht zum fachlichen Modell und steht deshalb nicht im ERM des Antrags. Das Diagramm des Antrags ist `docs/diagrams/erm.svg`, das Diagramm mit den umgesetzten Spaltennamen `docs/diagrams/erm-umgesetzt.svg`.
+Zusätzlich gibt es die Tabelle `sessions` (angemeldete Benutzer, vom Rails-Authentifizierungsgenerator) und die Tabelle `activities` (Aktivitätsprotokoll, siehe unten). Beide stehen nicht im ERM des Antrags. Das Diagramm des Antrags ist `docs/diagrams/erm.svg`, das Diagramm mit den umgesetzten Spaltennamen `docs/diagrams/erm-umgesetzt.svg`.
 
 **Regel:** Anzahl BOOKING pro PORTAL ≤ PORTAL.capacity | freie Plätze = capacity − Anzahl Bookings
 
@@ -166,12 +166,22 @@ Diese Regeln wurden nach der Genehmigung des Projektantrags geklärt. Begriffe s
 - **Stornieren:** Eine stornierte Reservierung wird gelöscht, der Platz ist sofort wieder frei. Es gibt keine Historie.
 - **Navigation:** Der Link "Admin" wird nur für Rick angezeigt. Die Berechtigungsprüfung auf dem Server bleibt zusätzlich bestehen.
 
+### Erweiterungen nach dem Antrag
+
+Der Kompetenznachweis verlangt Funktionen, die im Antrag nicht standen. Sie wurden nachträglich umgesetzt:
+
+- **Benutzerprofil:** Jeder angemeldete Benutzer sieht unter "Profil" seine Daten (Name, E-Mail, Rolle) und ändert Name, E-Mail und Passwort. Für ein neues Passwort ist das aktuelle nötig, es hat mindestens 8 Zeichen und muss wiederholt werden. Danach enden die anderen Sitzungen des Benutzers. Man kann nur das eigene Profil ändern, und die Rolle lässt sich dort nicht ändern.
+- **Benutzerverwaltung:** Rick sieht alle Benutzer mit Rolle und Anzahl Reservierungen, legt Benutzer an (Startpasswort mindestens 8 Zeichen), ändert Name, E-Mail, Rolle und optional das Passwort und löscht Benutzer. Weil es keine Selbstregistrierung gibt, ist das der Weg für neue Reisende und Admins. Rick kann sich nicht selbst löschen und seine eigene Rolle nicht ändern, damit es immer einen Admin gibt. Beim Löschen (mit Rückfrage und Anzahl Reservierungen) werden die Reservierungen und Sitzungen des Benutzers mitgelöscht, die Plätze werden frei.
+- **Aktivitätsprotokoll:** Rick sieht unter "Protokoll" die letzten 200 Einträge, die neuesten zuerst: Anmeldung, fehlgeschlagene Anmeldung (mit der versuchten E-Mail), Abmeldung, Reservierung, Stornierung (auch durch Rick, mit beiden Namen), Änderungen an Portalen (mit den geänderten Werten), Benutzern und Profilen. Eine abgelehnte Aktion schreibt keinen Eintrag, ein Passwort steht nie im Protokoll. Der Name des Benutzers wird zum Zeitpunkt des Eintrags gespeichert, deshalb bleiben Einträge nach dem Löschen oder Umbenennen lesbar.
+- **Fehlerseiten:** 404, 422, 500, 400 und die Seite für zu alte Browser sind deutsch, im Design der Applikation und führen (wo sinnvoll) zurück zur Übersicht.
+
 ### Technische Festlegungen
 
 - **Anmeldung:** Der eingebaute Rails-8-Authentifizierungsgenerator, ohne Passwort-Reset (es gibt keine Mails im MVP). Er benötigt `bcrypt`. `USER.role` ist ein Enum mit `traveler` (Standard) und `admin`.
 - **Zeitzone:** `config.time_zone = "Zurich"`. Gespeichert wird in UTC, Anzeige und Eingabe erfolgen in Schweizer Zeit.
 - **Routen:** `root` ist die Portalübersicht. Reservieren läuft über `POST /portals/:portal_id/bookings`, "Meine Reservierungen" über `/bookings`, der Admin-Bereich unter `/admin/portals` mit verschachtelten `bookings`. `Admin::BaseController` prüft die Rolle, alle übrigen Controller verlangen eine Anmeldung. Die Locking-Logik liegt im Modell (`Portal#reserve_seat_for(user)`), nicht im Controller.
 - **Datenbank unter Last:** SQLite serialisiert Schreibzugriffe mit `BEGIN IMMEDIATE`. Wartet eine Transaktion länger als der Timeout (5000 ms), wird die Busy-Ausnahme abgefangen und als verständliche Meldung angezeigt ("Gerade ist viel los, versuch es gleich nochmal"). Es wird keine Reservierung gespeichert.
+- **Protokoll:** Die Controller schreiben nach einer erfolgreichen Aktion einen Eintrag (`Activity.record`). Es gibt bewusst keine Model-Callbacks, damit klar bleibt, wer handelt.
 - **Concurrency-Test:** Ein eigener Testfall ohne umschließende Test-Transaktion startet zehn Threads mit je eigener Datenbankverbindung, die den letzten Platz reservieren. Erwartet wird genau 1 Erfolg und 1 gespeicherte Reservierung.
 
 ### Abweichungen vom genehmigten Antrag

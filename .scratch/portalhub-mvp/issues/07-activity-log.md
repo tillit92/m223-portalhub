@@ -4,13 +4,13 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] An Activity records the acting User (empty for a failed login), the User's name as it was at that moment, an action, a readable description and the time
-- [ ] Entries are written for: login, failed login (with the email that was tried), logout, reservation, cancellation by the Traveler, cancellation by the Admin (naming both), Portal created, changed (naming the changed values) and deleted
-- [ ] A refused action (full Portal, departed Portal, invalid input) writes no entry
-- [ ] Deleting a User keeps their entries, with the name they had
-- [ ] "Protokoll" in the admin area lists the newest entries first with time, who, action and description; it has an empty state
-- [ ] Only the Admin can open it; a Traveler and a visitor are refused like on every admin page
-- [ ] The admin area has a small navigation "Portale | Benutzer | Protokoll"
-- [ ] Integration tests cover the entries for each action above, the empty state and denied access
+- [x] An Activity records the acting User (empty for a failed login), the User's name as it was at that moment, an action, a readable description and the time
+- [x] Entries are written for: login, failed login (with the email that was tried), logout, reservation, cancellation by the Traveler, cancellation by the Admin (naming both), Portal created, changed (naming the changed values) and deleted
+- [x] A refused action (full Portal, departed Portal, invalid input) writes no entry
+- [x] Deleting a User keeps their entries, with the name they had
+- [x] "Protokoll" in the admin area lists the newest entries first with time, who, action and description; it has an empty state
+- [x] Only the Admin can open it; a Traveler and a visitor are refused like on every admin page
+- [x] The admin area has a small navigation "Portale | Benutzer | Protokoll"
+- [x] Integration tests cover the entries for each action above, the empty state and denied access

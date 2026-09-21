@@ -1,6 +1,6 @@
 # PortalHub
 
-Multiuser-Webapplikation im Stil von Rick and Morty (Modul M223). Reisende sehen Portale zu verschiedenen Dimensionen und reservieren einen Platz für die Reise. Ein Portal nimmt nie mehr Reservierungen an, als es Plätze hat, auch wenn mehrere Reisende gleichzeitig um den letzten Platz konkurrieren. Rick (Admin) verwaltet die Portale.
+Multiuser-Webapplikation im Stil von Rick and Morty (Modul M223). Reisende sehen Portale zu verschiedenen Dimensionen und reservieren einen Platz für die Reise. Ein Portal nimmt nie mehr Reservierungen an, als es Plätze hat, auch wenn mehrere Reisende gleichzeitig um den letzten Platz konkurrieren. Rick (Admin) verwaltet Portale, Reservierungen und Benutzer und sieht ein Aktivitätsprotokoll. Jeder Benutzer kann sein Profil und Passwort ändern.
 
 ![Portalübersicht](docs/screenshots/03-portaluebersicht.png)
 
@@ -41,7 +41,7 @@ bin/dev                   # Server starten: http://localhost:3000
 
 ## Datenbank und Demo-Daten
 
-Vier Tabellen: `users`, `portals`, `bookings` und `sessions`. Das Schema steht in `db/schema.rb`, das ERM mit allen Spalten in [docs/umsetzung.md](docs/umsetzung.md).
+Fünf Tabellen: `users`, `portals`, `bookings`, `sessions` und `activities` (Aktivitätsprotokoll). Das Schema steht in `db/schema.rb`, das ERM mit allen Spalten in [docs/umsetzung.md](docs/umsetzung.md).
 
 Die Demo-Daten stehen in `db/seeds.rb` und lassen sich beliebig oft neu laden, ohne Duplikate zu erzeugen:
 
@@ -57,13 +57,13 @@ Alle Konten haben das Passwort `wubba-lubba`.
 
 | E-Mail | Name | Rolle |
 | --- | --- | --- |
-| `rick@portalhub.test` | Rick Sanchez | Admin (verwaltet Portale und Reservierungen) |
+| `rick@portalhub.test` | Rick Sanchez | Admin (verwaltet Portale, Reservierungen und Benutzer, sieht das Protokoll) |
 | `morty@portalhub.test` | Morty Smith | Reisender |
 | `summer@portalhub.test` | Summer Smith | Reisender |
 | `beth@portalhub.test` | Beth Smith | Reisender |
 | `birdperson@portalhub.test` | Birdperson | Reisender |
 
-Eine Selbstregistrierung gibt es nicht. Für den Wettlauf um den letzten Platz melde dich in zwei getrennten Browserfenstern (eines davon privat) als zwei verschiedene Reisende an und reserviere dasselbe Portal.
+Eine Selbstregistrierung gibt es nicht, neue Benutzer legt Rick unter "Admin", "Benutzer" an. Für den Wettlauf um den letzten Platz melde dich in zwei getrennten Browserfenstern (eines davon privat) als zwei verschiedene Reisende an und reserviere dasselbe Portal.
 
 ## Tests
 

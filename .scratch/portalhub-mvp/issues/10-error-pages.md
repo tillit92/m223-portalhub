@@ -4,11 +4,11 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] 404, 422, 500, 400 and the "browser too old" page are German, dark, with the green ring and a Rick and Morty tone
-- [ ] Pages that can be left offer a way back to the overview; the "browser too old" page names the minimum versions
-- [ ] No English Rails default text is left on any of them
-- [ ] An unknown Portal shows the German 404 page
-- [ ] A browser below the minimum versions gets the German page
-- [ ] Integration tests cover the served pages and the two situations above
+- [x] 404, 422, 500, 400 and the "browser too old" page are German, dark, with the green ring and a Rick and Morty tone
+- [x] Pages that can be left offer a way back to the overview; the "browser too old" page names the minimum versions
+- [x] No English Rails default text is left on any of them
+- [x] An unknown Portal shows the German 404 page
+- [x] A browser below the minimum versions gets the German page
+- [x] Integration tests cover the served pages and the two situations above

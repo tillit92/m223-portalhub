@@ -4,13 +4,13 @@
 
 **Blocked by:** 07 (Aktivitätsprotokoll)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The profile shows name, email and role; a Traveler and the Admin use the same page
-- [ ] Name and email can be changed; invalid input (empty name, email already taken) is explained at the field and keeps what was typed
-- [ ] A new password needs the correct current password, at least 8 characters and a matching confirmation; each problem is explained at its field
-- [ ] After a password change the User's other sessions are ended, the current one stays
-- [ ] A User can only ever change their own profile
-- [ ] Successful changes are confirmed and written to the Activity log (without the password)
-- [ ] A visitor is redirected to login
-- [ ] Integration tests cover showing, changing name and email, the validations, the password change including the other sessions, and the visitor case
+- [x] The profile shows name, email and role; a Traveler and the Admin use the same page
+- [x] Name and email can be changed; invalid input (empty name, email already taken) is explained at the field and keeps what was typed
+- [x] A new password needs the correct current password, at least 8 characters and a matching confirmation; each problem is explained at its field
+- [x] After a password change the User's other sessions are ended, the current one stays
+- [x] A User can only ever change their own profile
+- [x] Successful changes are confirmed and written to the Activity log (without the password)
+- [x] A visitor is redirected to login
+- [x] Integration tests cover showing, changing name and email, the validations, the password change including the other sessions, and the visitor case

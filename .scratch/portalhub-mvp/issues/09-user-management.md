@@ -4,13 +4,13 @@
 
 **Blocked by:** 07 (Aktivitätsprotokoll)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The table lists name, email, role and number of Bookings, with Bearbeiten and Löschen, and a "+ Neuer Benutzer" button
-- [ ] Rick can create a User with name, email, role and a start password (at least 8 characters); invalid input is explained at the field and keeps what was typed
-- [ ] Rick can edit name, email and role, and optionally set a new password (left empty means unchanged)
-- [ ] Rick cannot change his own role and cannot delete himself, with a clear message
-- [ ] Deleting a User asks for confirmation naming the number of Bookings, then deletes the User, their Bookings and sessions; the seats are free again
-- [ ] Creating, changing and deleting a User are written to the Activity log
-- [ ] Every User admin page is refused for a Traveler and a visitor and changes no data
-- [ ] Integration tests cover create, edit, the validations, own-account rules, delete with the cascade and denied access for every entry point
+- [x] The table lists name, email, role and number of Bookings, with Bearbeiten and Löschen, and a "+ Neuer Benutzer" button
+- [x] Rick can create a User with name, email, role and a start password (at least 8 characters); invalid input is explained at the field and keeps what was typed
+- [x] Rick can edit name, email and role, and optionally set a new password (left empty means unchanged)
+- [x] Rick cannot change his own role and cannot delete himself, with a clear message
+- [x] Deleting a User asks for confirmation naming the number of Bookings, then deletes the User, their Bookings and sessions; the seats are free again
+- [x] Creating, changing and deleting a User are written to the Activity log
+- [x] Every User admin page is refused for a Traveler and a visitor and changes no data
+- [x] Integration tests cover create, edit, the validations, own-account rules, delete with the cascade and denied access for every entry point

@@ -96,6 +96,20 @@ try {
   await clickIn('tbody tr', 'th', 'Cronenberg-Express', 'form[data-turbo-confirm] button'); await sleep(1200);
   check('Bestätigen im Dialog löscht das Portal', (await ev(`document.querySelectorAll('tbody tr').length`)) === portalsBefore - 1 && /Portal gelöscht/.test(await flash('.flash--notice')), await flash('.flash--notice'));
 
+  // --- Benutzerverwaltung, Profil, Protokoll (als Rick)
+  await goto('/admin/users');
+  const bethBookings = await ev(`[...document.querySelectorAll('tbody tr')].find(r=>r.querySelector('th').textContent.trim()==='Beth Smith').querySelectorAll('td')[2].textContent.trim()`);
+  const usersBefore = await ev(`document.querySelectorAll('tbody tr').length`);
+  dialogs.length = 0; dialogPlan = 'dismiss';
+  await clickIn('tbody tr', 'th', 'Beth Smith', 'form[data-turbo-confirm] button'); await sleep(900);
+  check('Benutzer löschen fragt zuerst nach und nennt die Reservierungen', dialogs.length === 1 && /Benutzer Beth Smith wirklich löschen/.test(dialogs[0].message) && new RegExp(`Es gibt ${bethBookings} Reservierung`).test(dialogs[0].message), dialogs[0]?.message);
+  check('Abbrechen im Dialog löscht den Benutzer nicht', (await ev(`document.querySelectorAll('tbody tr').length`)) === usersBefore);
+  check('das eigene Konto hat keinen Löschen-Button', await ev(`![...document.querySelectorAll('tbody tr')].find(r=>r.querySelector('th').textContent.trim()==='Rick Sanchez').querySelector('button')`));
+  await goto('/profile');
+  check('Profil zeigt die eigenen Daten', (await ev(`document.querySelector('input[name="user[name]"]')?.value`)) === 'Rick Sanchez');
+  await goto('/admin/activities');
+  check('Protokoll zeigt die bisherigen Aktionen', (await ev(`document.querySelectorAll('tbody tr').length`)) > 0 && /storniert|gelöscht/.test(await ev(`document.querySelector('tbody').textContent`)));
+
   check('keine JavaScript-Fehler in der Konsole', jsErrors.length === 0, jsErrors.join(' | '));
 } catch (e) { console.log('ABBRUCH:', e.message); results.push({ name: 'Ablauf', ok: false }); }
 finally {
