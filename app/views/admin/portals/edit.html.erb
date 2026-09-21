@@ -1,0 +1,6 @@
+<% content_for :title, "#{@portal.name_was} bearbeiten - PortalHub" %>
+
+<%= link_to admin_portals_path, class: "back-link" do %>&larr; Zurück zu den Portalen<% end %>
+
+<h1 class="page__title"><%= @portal.name_was %> bearbeiten</h1>
+<%= render "form", portal: @portal %>

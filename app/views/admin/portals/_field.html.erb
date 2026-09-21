@@ -1,0 +1,9 @@
+<%# One labelled input with its errors below it. `options` are extra input attributes. %>
+<% errors = portal.errors[attribute] %>
+<div class="field <%= "field--error" if errors.any? %>">
+  <%= form.label attribute, label %>
+  <%= form.public_send kind, attribute, required: true, aria: { invalid: errors.any?.presence }, **local_assigns.fetch(:options, {}) %>
+  <% errors.each do |message| %>
+    <p class="field__error"><%= message %></p>
+  <% end %>
+</div>

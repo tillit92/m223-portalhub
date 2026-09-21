@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
   <head>
-    <title><%= content_for(:title) || "M223 Rick And Morty Portalhub" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="M223 Rick And Morty Portalhub">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    <%= render "layouts/head" %>
   </head>
 
   <body>
-    <%= yield %>
+    <a class="skip-link" href="#main">Zum Inhalt</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <%= link_to root_path, class: "brand" do %>
+          <%= render "shared/brand" %>
+        <% end %>
+
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <% if Current.user %>
+            <%= link_to "Portale", root_path, class: "site-nav__link", aria: { current: current_page?(root_path) ? "page" : nil } %>
+            <%= link_to "Meine Reservierungen", bookings_path, class: "site-nav__link", aria: { current: current_page?(bookings_path) ? "page" : nil } %>
+            <% if Current.user.admin? %>
+              <%= link_to "Admin", admin_portals_path, class: "site-nav__link", aria: { current: request.path.start_with?("/admin") ? "page" : nil } %>
+            <% end %>
+            <span class="site-nav__user"><%= Current.user.name %></span>
+            <%= button_to "Abmelden", session_path, method: :delete, class: "button button--ghost button--small" %>
+          <% end %>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="page">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
   </body>
 </html>

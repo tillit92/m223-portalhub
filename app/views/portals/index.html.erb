@@ -1,0 +1,38 @@
+<% content_for :title, "Portale - PortalHub" %>
+
+<div class="page__header">
+  <h1 class="page__title">Nächste Abflüge</h1>
+  <p class="lead">Such dir ein Portal aus und sichere dir deinen Platz.</p>
+</div>
+
+<% if @portals.present? %>
+  <ul class="portal-list">
+    <% @portals.each do |portal| %>
+      <li class="portal-row">
+        <div class="portal-row__main">
+          <h2 class="portal-row__name"><%= portal.name %></h2>
+          <p class="portal-row__meta">
+            <span class="mono"><%= portal.dimension %></span>
+            <span><%= departure_label(portal) %></span>
+          </p>
+        </div>
+
+        <div class="portal-row__seats">
+          <%= seat_pips(portal) %>
+          <span class="portal-row__free"><%= free_seats_label(portal) %></span>
+          <% if portal.full? %>
+            <span class="tag tag--full">AUSGEBUCHT</span>
+          <% end %>
+        </div>
+
+        <%= link_to "Details", portal_path(portal), class: "button button--ghost button--small portal-row__action" %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <div class="empty">
+    <%= render "shared/portal" %>
+    <p class="empty__title">Gerade fliegt kein Portal.</p>
+    <p class="lead">Schau später nochmal vorbei, Rick öffnet bald neue Dimensionen.</p>
+  </div>
+<% end %>

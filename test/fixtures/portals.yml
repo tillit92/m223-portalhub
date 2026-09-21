@@ -1,0 +1,29 @@
+soon:
+  name: Morgen-Portal
+  dimension: C-137
+  departure_time: <%= 1.day.from_now.to_fs(:db) %>
+  capacity: 5
+
+full:
+  name: Abend-Portal
+  dimension: J19-Zeta-7
+  departure_time: <%= 2.days.from_now.to_fs(:db) %>
+  capacity: 3
+
+night:
+  name: Nacht-Portal
+  dimension: C-500
+  departure_time: <%= 3.days.from_now.to_fs(:db) %>
+  capacity: 6
+
+empty:
+  name: Cronenberg-Express
+  dimension: Cronenberg-Welt
+  departure_time: <%= 4.days.from_now.to_fs(:db) %>
+  capacity: 4
+
+departed:
+  name: Gestern-Portal
+  dimension: Gazorpazorp
+  departure_time: <%= 1.day.ago.to_fs(:db) %>
+  capacity: 4

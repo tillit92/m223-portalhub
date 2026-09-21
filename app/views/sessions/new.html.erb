@@ -1,0 +1,24 @@
+<% content_for :title, "Anmelden - PortalHub" %>
+
+<div class="auth__content">
+  <p class="brand"><%= render "shared/brand" %></p>
+
+  <h1 class="auth__title">Rein ins Portal.</h1>
+  <p class="lead">Melde dich an und reserviere deinen Platz für die nächste Reise durch die Dimensionen.</p>
+
+  <%= render "shared/flash" %>
+
+  <%= form_with url: session_path, class: "form" do |form| %>
+    <div class="field">
+      <%= form.label :email_address, "E-Mail" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address] %>
+    </div>
+
+    <div class="field">
+      <%= form.label :password, "Passwort" %>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72 %>
+    </div>
+
+    <%= form.submit "Anmelden", class: "button" %>
+  <% end %>
+</div>

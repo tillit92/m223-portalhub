@@ -1,0 +1,31 @@
+<% password_digest = BCrypt::Password.create("portal-gun-42") %>
+
+rick:
+  name: Rick Sanchez
+  email_address: rick@portalhub.test
+  password_digest: <%= password_digest %>
+  role: admin
+
+morty:
+  name: Morty Smith
+  email_address: morty@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler
+
+summer:
+  name: Summer Smith
+  email_address: summer@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler
+
+beth:
+  name: Beth Smith
+  email_address: beth@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler
+
+birdperson:
+  name: Birdperson
+  email_address: birdperson@portalhub.test
+  password_digest: <%= password_digest %>
+  role: traveler

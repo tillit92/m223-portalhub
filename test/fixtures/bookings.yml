@@ -1,0 +1,30 @@
+# soon: 3 von 5 belegt
+morty_soon:
+  user: morty
+  portal: soon
+
+summer_soon:
+  user: summer
+  portal: soon
+
+rick_soon:
+  user: rick
+  portal: soon
+
+# full: 3 von 3 belegt (voll)
+morty_full:
+  user: morty
+  portal: full
+
+summer_full:
+  user: summer
+  portal: full
+
+rick_full:
+  user: rick
+  portal: full
+
+# departed
+morty_departed:
+  user: morty
+  portal: departed
