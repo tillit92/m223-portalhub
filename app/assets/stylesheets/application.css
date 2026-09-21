@@ -353,6 +353,11 @@ a {
   font-size: var(--text-sm);
 }
 
+.field__hint {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
 .form--wide {
   max-width: 32rem;
 }

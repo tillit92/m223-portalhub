@@ -3,7 +3,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :bookings, dependent: :destroy
 
-  enum :role, { traveler: "traveler", admin: "admin" }, default: :traveler
+  enum :role, { traveler: "traveler", admin: "admin" }, default: :traveler, validate: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

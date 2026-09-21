@@ -57,6 +57,12 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
     assert_response :success
     get admin_activities_path
     assert_response :success
+    get admin_users_path
+    assert_response :success
+    get new_admin_user_path
+    assert_response :success
+    get edit_admin_user_path(users(:beth))
+    assert_response :success
   end
 
   test "the admin cannot reserve on behalf of someone else: there is no route, and a user id is ignored" do
@@ -87,11 +93,17 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
         [ :delete, admin_portal_path(portal) ],
         [ :get, admin_portal_bookings_path(portal) ],
         [ :get, admin_activities_path ],
+        [ :get, admin_users_path ],
+        [ :get, new_admin_user_path ],
+        [ :post, admin_users_path, { user: { name: "Neu", email_address: "neu@portalhub.test", role: "admin", password: "start-passwort-1" } } ],
+        [ :get, edit_admin_user_path(users(:beth)) ],
+        [ :patch, admin_user_path(users(:beth)), { user: { role: "admin" } } ],
+        [ :delete, admin_user_path(users(:beth)) ],
         [ :delete, admin_portal_booking_path(portal, booking) ]
       ]
     end
 
     def data_snapshot
-      [ Portal.count, Booking.count, Portal.order(:id).pluck(:name, :capacity) ]
+      [ Portal.count, Booking.count, Portal.order(:id).pluck(:name, :capacity), User.count, User.order(:id).pluck(:name, :role) ]
     end
 end

@@ -14,6 +14,7 @@ Rails.application.routes.draw do
     resources :portals, except: :show do
       resources :bookings, only: %i[ index destroy ]
     end
+    resources :users, except: :show
     resources :activities, only: :index
   end
 
