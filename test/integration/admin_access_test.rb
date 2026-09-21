@@ -55,6 +55,8 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
     assert_response :success
     get admin_portal_bookings_path(portals(:soon))
     assert_response :success
+    get admin_activities_path
+    assert_response :success
   end
 
   test "the admin cannot reserve on behalf of someone else: there is no route, and a user id is ignored" do
@@ -84,6 +86,7 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
         [ :patch, admin_portal_path(portal), { portal: { capacity: 9 } } ],
         [ :delete, admin_portal_path(portal) ],
         [ :get, admin_portal_bookings_path(portal) ],
+        [ :get, admin_activities_path ],
         [ :delete, admin_portal_booking_path(portal, booking) ]
       ]
     end

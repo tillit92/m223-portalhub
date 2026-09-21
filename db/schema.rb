@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_083203) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_120408) do
+  create_table "activities", force: :cascade do |t|
+    t.string "action", null: false
+    t.datetime "created_at", null: false
+    t.string "details", null: false
+    t.integer "user_id"
+    t.string "user_name"
+    t.index ["created_at"], name: "index_activities_on_created_at"
+    t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
   create_table "bookings", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "portal_id", null: false
@@ -49,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_083203) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "activities", "users", on_delete: :nullify
   add_foreign_key "bookings", "portals"
   add_foreign_key "bookings", "users"
   add_foreign_key "sessions", "users"

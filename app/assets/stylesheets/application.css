@@ -424,6 +424,32 @@ a {
   line-height: 1.5rem;
 }
 
+/* Navigation inside the admin area */
+
+.admin-tabs {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-tabs a {
+  padding: var(--space-3) 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.admin-tabs a:hover,
+.admin-tabs a[aria-current="page"] {
+  color: var(--text);
+}
+
+.admin-tabs a[aria-current="page"] {
+  border-bottom-color: var(--accent);
+}
+
 /* Flash messages */
 
 .flash {

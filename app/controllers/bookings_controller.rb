@@ -20,6 +20,7 @@ class BookingsController < ApplicationController
 
     # A reserved seat shows up in "Meine Reservierungen"; a refusal stays on the Portal.
     if result == :reserved
+      Activity.record("booking_created", "hat einen Platz im Portal #{portal.name} reserviert")
       redirect_to bookings_path, kind => message
     else
       redirect_to portal, kind => message
@@ -33,6 +34,7 @@ class BookingsController < ApplicationController
 
     if booking.cancellable?
       booking.destroy!
+      Activity.record("booking_cancelled", "hat die Reservierung im Portal #{booking.portal.name} storniert")
       redirect_to bookings_path, notice: "Reservierung storniert."
     else
       redirect_to bookings_path, alert: Booking::CANCEL_REFUSED_MESSAGE

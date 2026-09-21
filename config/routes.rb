@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     resources :portals, except: :show do
       resources :bookings, only: %i[ index destroy ]
     end
+    resources :activities, only: :index
   end
 
   get "up" => "rails/health#show", as: :rails_health_check
