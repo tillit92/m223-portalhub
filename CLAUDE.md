@@ -49,3 +49,31 @@ Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-
 ### Domain docs
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+# PortalHub
+
+Multiuser-Reservierungsapp für interdimensionale Portale (Rick and Morty), gebaut mit Ruby on Rails und SQLite.
+
+## Projektkontext
+
+@docs/spec.md
+@docs/conventions.md
+@docs/wegleitung.md
+
+Die vollständige Anforderungsanalyse steht in `docs/spec.md`.
+Alle Rails-Konventionen (Namensgebung, Generatoren, Namespacing, Controller-Vererbung, Testing) stehen in `docs/conventions.md` und sind für dieses Projekt verbindlich.
+`docs/wegleitung.md` enthält die Modul-Vorgaben (Bewertungskriterien): u.a. dass automatisierte Tests explizit die zentrale Fachregel (Locking beim letzten Platz) sowie erlaubte/verweigerte Zugriffe prüfen müssen, dass `docs/` alle Bilder und Markdown-Doku enthalten muss, und wie `README.md` aufgebaut sein soll (Tech-Stack, Setup, Start-/Testbefehle, Demo-Konten). Diese Vorgaben sind beim Planen, Implementieren und beim Schreiben von README/Doku verbindlich einzuhalten.
+
+## Diagramme
+
+Diese Bilder zeigen ERM, Breadboards und Mockups im Detail und sollten vor UI- bzw. Datenmodell-Arbeit angesehen werden:
+
+- `docs/diagrams/erm.png` – Entity-Relationship-Model (User, Portal, Booking)
+- `docs/diagrams/breadboards.png` – Klick-/Ablaufdiagramm durch alle Seiten inkl. Server-Prüfung
+- `docs/diagrams/fat-marker-sketches.png` – UI-Mockups aller 6 Screens
+
+Bei Fragen zu Datenmodell oder UI-Layout diese Bilder mit @docs/diagrams/<datei>.png in den Kontext holen (z.B. `@docs/diagrams/erm.png Erklär mir die Beziehungen`).
+
+## Wichtigster technischer Punkt
+
+Bei gleichzeitigen Buchungen um den letzten freien Platz eines Portals darf nur eine Reservierung erfolgreich sein. Das erfordert eine Transaktion mit Locking (z.B. `with_lock` in Rails), nicht nur eine einfache Validierung.
