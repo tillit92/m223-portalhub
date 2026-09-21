@@ -1,4 +1,4 @@
-# Demo-Benutzer. Alle haben dasselbe Passwort (siehe README).
+# Demo-Benutzer. Alle haben dasselbe Passwort.
 demo_password = "wubba-lubba"
 
 [

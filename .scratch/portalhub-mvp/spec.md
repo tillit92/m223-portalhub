@@ -114,7 +114,7 @@ Every screen, the admin area included, follows the `design-taste-frontend` skill
 
 - **Design read:** a dark sci-fi interface in the style of Rick and Morty, playful but readable. Dials: VARIANCE 7, MOTION 4, DENSITY 4.
 - **Theme lock:** dark on every page. Off-black with a slight green tint instead of pure black, off-white text instead of pure white. Colors are defined once as variables.
-- **One accent:** portal green, used consistently for actions, focus and the portal element. Glow is allowed on the portal element and on focus, because the theme asks for it, and nowhere else. No second accent, no purple gradients.
+- **One accent:** portal green, used consistently for actions, focus and the portal element. Glow (shadows and blurs) is allowed only on the portal element, including its small logo mark, and on focus, because the theme asks for it. A faint green tint in page backgrounds is fine. Buttons do not glow. No second accent, no purple gradients.
 - **Type:** a geometric sans for text and headings and a matching monospace for numbers and small labels (Geist and Geist Mono), self-hosted with a swap fallback. No Inter, no serif.
 - **Signature element:** a swirling green portal built from CSS gradients and a slow rotation, on the login page and the Portal details page. It stands still when the user prefers reduced motion. No hand-drawn SVG illustrations.
 - **Layout:** the login page is an asymmetric split screen (portal on one side, form on the other). The Portal list uses dividers, not rows of identical cards. Seats are shown as a row of pips that show real state (booked vs. free), next to the "X von Y Plätzen frei" text. The admin table uses row dividers, no cards. One-line navigation.

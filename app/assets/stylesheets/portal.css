@@ -25,13 +25,13 @@
   inset: 0;
   background: conic-gradient(
     from 0deg,
-    #8be36a,
-    #2e8a3f 16%,
-    #a9f28a 32%,
-    #1d5b2d 50%,
-    #8be36a 66%,
-    #2e8a3f 82%,
-    #8be36a
+    var(--accent),
+    var(--accent-deep) 16%,
+    var(--accent-strong) 32%,
+    var(--accent-dark) 50%,
+    var(--accent) 66%,
+    var(--accent-deep) 82%,
+    var(--accent)
   );
   -webkit-mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
   mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
@@ -43,10 +43,10 @@
   inset: 4%;
   background: repeating-conic-gradient(
     from 0deg,
-    rgb(169 242 138 / 0.95) 0deg,
-    rgb(46 138 63 / 0.55) 22deg,
+    color-mix(in srgb, var(--accent-strong) 95%, transparent) 0deg,
+    color-mix(in srgb, var(--accent-deep) 55%, transparent) 22deg,
     transparent 46deg,
-    rgb(139 227 106 / 0.8) 60deg
+    color-mix(in srgb, var(--accent) 80%, transparent) 60deg
   );
   -webkit-mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
   mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
@@ -58,8 +58,8 @@
   position: absolute;
   inset: 26%;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, #030704 0%, #071a0c 60%, rgb(139 227 106 / 0.32) 100%);
-  box-shadow: 0 0 3rem rgb(139 227 106 / 0.5), inset 0 0 3rem var(--accent-glow);
+  background: radial-gradient(circle at 50% 50%, var(--portal-void) 0%, var(--portal-deep) 60%, color-mix(in srgb, var(--accent) 32%, transparent) 100%);
+  box-shadow: 0 0 3rem color-mix(in srgb, var(--accent) 50%, transparent), inset 0 0 3rem var(--accent-glow);
   animation: portal-pulse 7s ease-in-out infinite;
 }
 
@@ -95,7 +95,7 @@
   padding: var(--space-8);
   border-right: 1px solid var(--line);
   background:
-    radial-gradient(40rem 40rem at 45% 50%, rgb(139 227 106 / 0.10), transparent 65%),
+    radial-gradient(40rem 40rem at 45% 50%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 65%),
     var(--surface);
 }
 

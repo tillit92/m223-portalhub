@@ -10,7 +10,7 @@
     <header class="site-header">
       <div class="site-header__inner">
         <%= link_to root_path, class: "brand" do %>
-          <span class="brand__mark" aria-hidden="true"></span>PortalHub
+          <%= render "shared/brand" %>
         <% end %>
 
         <nav class="site-nav" aria-label="Hauptnavigation">

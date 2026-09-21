@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Freshly generated Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". As of now there is no domain code: no models, no controllers beyond `ApplicationController`, and `config/routes.rb` only has the `/up` health check. The README is still the Rails default. The requirements live in `docs/spec.md` (German); read it before building features.
+Freshly generated Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". Ticket 01 is done: login/logout (Rails built-in authentication, no password reset), `User` with role, seeds and the shared design (`app/assets/stylesheets/`). There are no Portals or Bookings yet, and the home page is a placeholder. The README is still the Rails default. The work is planned in `.scratch/portalhub-mvp/` (spec plus six tickets). The requirements live in `docs/spec.md` (German); read it before building features.
 
 ## Domain (from `docs/spec.md`)
 
@@ -14,7 +14,7 @@ Multiuser app where travelers reserve a seat on a portal to another dimension. T
 - **Roles**: traveler (browse portals, book, view/cancel own bookings) and admin "Rick" (CRUD on portals, manage bookings). Only logged-in users may book; non-admins hitting the admin area see "Berechtigung fehlt". Portal capacity must be at least 1 (validation message "Kapazität muss mind. 1 sein").
 - **Core invariant**: bookings per portal must never exceed `capacity`, even when several users book the last seat at the same time. The spec asks for a transaction plus a lock on the portal, re-checking free seats inside it; a full portal saves no booking and shows 0 free seats with the button disabled. Cancelling asks for confirmation first.
 - **Locking on SQLite**: `Portal#lock!` (`SELECT ... FOR UPDATE`) does nothing on SQLite. Serialization comes from the Rails 8 SQLite adapter starting every write transaction with `BEGIN IMMEDIATE` (`default_transaction_mode: :immediate`), so the free-seat check has to run inside the same `transaction` block as the insert. Test this with concurrent requests, not just a sequential unit test.
-- `password` is auth data: `bcrypt` is commented out in the `Gemfile`, so `has_secure_password` needs it enabled first.
+- **Auth columns**: the ERM says `email` and `password`, the code uses `email_address` and `password_digest` (Rails authentication generator, see the deviations in `docs/spec.md`). Demo users come from `db/seeds.rb`: Rick is the admin and everyone shares one password (see the seeds).
 
 ## Commands
 
@@ -34,7 +34,7 @@ Multiuser app where travelers reserve a seat on a portal to another dimension. T
 - **Database**: SQLite everywhere (`storage/*.sqlite3`). In production Rails uses four separate SQLite databases: primary plus `cache`, `queue` and `cable` for Solid Cache / Solid Queue / Solid Cable. Their schemas are `db/cache_schema.rb`, `db/queue_schema.rb` and `db/cable_schema.rb`, and their migrations live in `db/{cache,queue,cable}_migrate`. Development and test use a single database and no Solid infrastructure.
 - **Tests**: Minitest with fixtures (`fixtures :all`) and `parallelize(workers: :number_of_processors)` in `test/test_helper.rb`. Tests run in parallel, so don't rely on shared state between them.
 - **Deployment**: Docker image (`Dockerfile`) deployed with Kamal (`.kamal/`, `config/deploy.yml`), Thruster in front of Puma. `bin/jobs` runs the Solid Queue worker.
-- **PWA**: `app/views/pwa/` holds the manifest and service worker templates (routes for them are commented out in `config/routes.rb`).
+- **PWA**: `app/views/pwa/` holds the manifest and service worker templates (there are no routes for them).
 
 ## Agent skills
 

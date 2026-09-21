@@ -27,16 +27,23 @@
   --surface: #111815;
   --surface-raised: #17201b;
   --line: #22302a;
+  --line-strong: #5f7367;
   --text: #e9f0ea;
   --text-muted: #9aaba0;
 
   --accent: #8be36a;
   --accent-strong: #a9f28a;
-  --accent-glow: rgb(139 227 106 / 0.35);
+  --accent-deep: #2e8a3f;
+  --accent-dark: #1d5b2d;
+  --accent-glow: color-mix(in srgb, var(--accent) 35%, transparent);
+  --portal-void: #030704;
+  --portal-deep: #071a0c;
   --on-accent: #0a1a08;
   --danger: #ff8a7a;
 
   --radius: 12px;
+  --radius-sm: 6px;
+  --text-sm: 0.9rem;
   --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -63,7 +70,7 @@ body {
   margin: 0;
   min-height: 100dvh;
   background:
-    radial-gradient(60rem 36rem at 85% -12%, rgb(139 227 106 / 0.10), transparent 60%),
+    radial-gradient(60rem 36rem at 85% -12%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
     var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
@@ -91,7 +98,7 @@ a {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 .skip-link {
@@ -116,7 +123,7 @@ a {
 
 .site-header {
   border-bottom: 1px solid var(--line);
-  background: rgb(10 14 12 / 0.8);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
@@ -167,7 +174,7 @@ a {
 
 .site-nav__user {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 /* Page */
@@ -212,40 +219,36 @@ a {
 
 .button:hover {
   background: var(--accent-strong);
-  box-shadow: 0 0 24px var(--accent-glow);
   transform: translateY(-1px);
 }
 
 .button:active {
   transform: translateY(1px) scale(0.98);
-  box-shadow: none;
 }
 
 .button:disabled,
 .button[aria-disabled="true"] {
   background: var(--surface-raised);
   color: var(--text-muted);
-  box-shadow: none;
   cursor: not-allowed;
   transform: none;
 }
 
 .button--ghost {
   background: transparent;
-  border-color: var(--line);
+  border-color: var(--line-strong);
   color: var(--text);
 }
 
 .button--ghost:hover {
   background: var(--surface-raised);
   border-color: var(--accent);
-  box-shadow: none;
 }
 
 .button--small {
   min-height: 2.25rem;
   padding: 0 var(--space-4);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 /* Forms */
@@ -262,7 +265,7 @@ a {
 }
 
 .field label {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 550;
 }
 
@@ -272,7 +275,7 @@ a {
   width: 100%;
   min-height: 2.75rem;
   padding: 0 var(--space-4);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
   border-radius: var(--radius);
   background: var(--surface);
   color: var(--text);
@@ -302,7 +305,7 @@ a {
 
 .field__error {
   color: var(--danger);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 /* Flash messages */

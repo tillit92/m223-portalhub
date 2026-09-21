@@ -3,6 +3,10 @@ require "test_helper"
 class AuthenticationTest < ActionDispatch::IntegrationTest
   PASSWORD = "portal-gun-42"
 
+  def log_in(user)
+    post session_path, params: { email_address: user.email_address, password: PASSWORD }
+  end
+
   test "a visitor is sent to the login page when opening the home page" do
     get root_path
 
@@ -18,7 +22,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test "logging in with correct credentials lands on the home page" do
-    post session_path, params: { email_address: users(:morty).email_address, password: PASSWORD }
+    log_in users(:morty)
 
     assert_redirected_to root_path
     follow_redirect!
@@ -51,7 +55,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   end
 
   test "logging out ends the session" do
-    post session_path, params: { email_address: users(:morty).email_address, password: PASSWORD }
+    log_in users(:morty)
     delete session_path
 
     assert_redirected_to new_session_path
@@ -59,7 +63,7 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test "a logged-in user is not sent back to the login page after the first visit" do
+  test "a signed-in user sees the home page greeting them by name" do
     sign_in_as users(:rick)
 
     get root_path
