@@ -63,7 +63,7 @@ Alle Konten haben das Passwort `wubba-lubba`.
 | `beth@portalhub.test` | Beth Smith | Reisender |
 | `birdperson@portalhub.test` | Birdperson | Reisender |
 
-Eine Selbstregistrierung gibt es nicht, neue Benutzer legt Rick unter "Admin", "Benutzer" an. Für den Wettlauf um den letzten Platz melde dich in zwei getrennten Browserfenstern (eines davon privat) als zwei verschiedene Reisende an und reserviere dasselbe Portal.
+Eine Selbstregistrierung gibt es nicht, neue Benutzer legt Rick unter "Admin", "Benutzer" an. Für die Demo melde dich in zwei getrennten Browserfenstern (eines davon privat) an, zum Beispiel als Rick und als Morty, und stelle sie nebeneinander: Reserviert Morty, ändert sich Ricks Seite von selbst, ohne Neuladen. Für den Wettlauf um den letzten Platz reservierst du als zwei Reisende dasselbe Portal.
 
 ## Tests
 
@@ -74,7 +74,7 @@ bin/rails test test/integration/admin_access_test.rb:6  # ein einzelner Test (Da
 bin/ci                                                  # alles wie in der Abgabe: Style, Sicherheit, Tests, Seeds
 ```
 
-Die Bestätigungsdialoge (Stornieren, Löschen) brauchen echtes JavaScript und lassen sich deshalb nicht mit Rails-Tests prüfen. Dafür gibt es `node script/browser_check.mjs` (Node 22 oder neuer, ein Chromium-Browser wie Brave oder Chrome, laufender Server). Der Test verändert die Entwicklungsdaten, danach `bin/rails db:seed` ausführen. Details im Kopf des Skripts.
+Die Live-Aktualisierung lässt sich mit zwei echten Browsern prüfen (`node script/live_check.mjs`, gleiche Voraussetzungen, setzt frische Demo-Daten voraus). Die Bestätigungsdialoge (Stornieren, Löschen) brauchen echtes JavaScript und lassen sich deshalb nicht mit Rails-Tests prüfen. Dafür gibt es `node script/browser_check.mjs` (Node 22 oder neuer, ein Chromium-Browser wie Brave oder Chrome, laufender Server). Der Test verändert die Entwicklungsdaten, danach `bin/rails db:seed` ausführen. Details im Kopf des Skripts.
 
 Die Tests prüfen die zentrale Fachregel (nie mehr Reservierungen als Plätze, auch bei gleichzeitigen Anfragen) sowie erlaubte und verweigerte Zugriffe für Besucher, Reisende und Admin. Wie die Sperre funktioniert und was die Tests beweisen, steht in [docs/adr/0002-capacity-enforced-with-portal-lock.md](docs/adr/0002-capacity-enforced-with-portal-lock.md).
 

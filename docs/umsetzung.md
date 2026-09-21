@@ -4,7 +4,7 @@ Stand: 21.09.2026. Diese Datei ergänzt [spec.md](spec.md) (Was und Warum) um de
 
 ## 1. Erreichter Stand
 
-Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweiterungen aus dem nächsten Abschnitt. Die Tests laufen vollständig durch (142 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
+Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweiterungen aus dem nächsten Abschnitt. Die Tests laufen vollständig durch (176 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
 
 | Nr. | Funktionale Anforderung | Ergebnis | Nachweis (Tests) |
 | --- | --- | --- | --- |
@@ -26,6 +26,7 @@ Der Kompetenznachweis verlangt für eine Multi-User-Applikation weitere Funktion
 | Benutzerprofil | Jeder Benutzer sieht seine Daten und ändert Name, E-Mail und Passwort (das aktuelle Passwort ist nötig, danach enden die anderen Sitzungen). | `profile_test.rb` |
 | Benutzerverwaltung | Rick legt Benutzer an, ändert Name, E-Mail, Rolle und Passwort und löscht Benutzer. Er kann sich nicht selbst löschen und seine eigene Rolle nicht ändern, und der letzte Admin kann nie herabgestuft oder gelöscht werden. Ein neues Passwort oder eine neue Rolle beendet die Sitzungen des Benutzers. | `admin_users_test.rb`, `user_test.rb` |
 | Aktivitätsprotokoll | Rick sieht, wer wann was getan hat: Anmeldungen (auch fehlgeschlagene), Reservierungen, Stornierungen, Änderungen an Portalen, Benutzern und Profilen, filterbar nach Aktion und Benutzer. Einträge bleiben nach dem Löschen eines Benutzers lesbar. | `activity_log_test.rb` |
+| Live-Aktualisierung | Ändert jemand etwas (reservieren, stornieren, Portale, Benutzer), aktualisieren sich die offenen Seiten der anderen von selbst, ohne Neuladen. Nur ein Signal wird gesendet, kein Seiteninhalt. | `live_updates_test.rb`, `connection_test.rb`, `script/live_check.mjs` |
 | Avatare | Jeder Benutzer wählt im Profil ein Bild aus einer festen Auswahl von fünf Figuren oder keines (dann Initialen). Kein Upload. Rick kann Bilder in der Benutzerverwaltung zuweisen. Die Bilder erscheinen in Navigation, Benutzerliste und Protokoll. | `avatars_test.rb`, `user_test.rb` |
 | Fehlerseiten | 404, 422, 500, 400 und "Browser zu alt" sind deutsch und im Design der Applikation statt der englischen Rails-Standardseiten. | `error_pages_test.rb` |
 
@@ -108,6 +109,7 @@ Anforderung: Login, Portalübersicht, Reservierung und Stornierung funktionieren
 
 | Browser | Ergebnis |
 | --- | --- |
+| Brave 152 (Chromium, zwei Browser gleichzeitig) | **11 von 11 Prüfungen bestanden** (`node script/live_check.mjs`): Ändert Morty etwas, zeigt Ricks Seite die Änderung nach rund 200 Millisekunden von selbst, ohne Neuladen (Übersicht, Protokoll, Reservierungsliste). Mortys Bestätigungsmeldung bleibt stehen, ein offenes Formular bleibt unangetastet. |
 | Brave 152 (Chromium, interaktiv) | **20 von 20 Prüfungen bestanden** (`node script/browser_check.mjs`, gesteuert über das DevTools-Protokoll, mit echtem JavaScript): Reservieren mit Weiterleitung und Meldung, Stornieren und Löschen mit den **echten Bestätigungsdialogen** (Abbrechen löscht nichts, Bestätigen löscht, der Dialog nennt Portal und Anzahl Reservierungen), Abweisung eines Reisenden im Admin-Bereich, Benutzerverwaltung mit Lösch-Dialog, Profil und Protokoll, keine JavaScript-Fehler in der Konsole. Brave nutzt dieselbe Engine wie Chrome. Chrome selbst wurde damit nicht getestet. |
 | Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Dazu kommen die Integrationstests, das sind aber keine Browsertests. |
 | Firefox | **Nicht geprüft.** Auf dem Entwicklungsrechner ist Firefox nicht installiert. |
