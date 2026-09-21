@@ -61,7 +61,7 @@ class AdminBookingsTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test "the admin reserves for himself through the normal traveler flow" do
+  test "the admin reserves for themself through the normal traveler flow" do
     assert_difference "Booking.count", 1 do
       post portal_bookings_path(portals(:night))
     end

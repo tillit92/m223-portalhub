@@ -49,7 +49,7 @@ class ProfilesController < ApplicationController
     end
 
     def log_changes
-      changes = @user.saved_changes.slice(*LABELS.keys).map { |attribute, (from, to)| "#{LABELS[attribute]}: #{from} → #{to}" }
+      changes = Activity.change_list(@user, LABELS)
       return if changes.empty?
 
       Activity.record("profile_updated", "hat das eigene Profil geändert (#{changes.join(", ")})")

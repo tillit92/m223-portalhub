@@ -97,6 +97,7 @@ class ProfileTest < ActionDispatch::IntegrationTest
 
     patch profile_path, params: { user: { name: "Morty Smith", role: "admin" } }
 
+    assert_redirected_to profile_path
     assert users(:morty).reload.traveler?
   end
 

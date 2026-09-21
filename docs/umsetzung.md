@@ -4,7 +4,7 @@ Stand: 21.09.2026. Diese Datei ergänzt [spec.md](spec.md) (Was und Warum) um de
 
 ## 1. Erreichter Stand
 
-Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweiterungen aus dem nächsten Abschnitt. Die Tests laufen vollständig durch (126 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
+Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweiterungen aus dem nächsten Abschnitt. Die Tests laufen vollständig durch (142 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
 
 | Nr. | Funktionale Anforderung | Ergebnis | Nachweis (Tests) |
 | --- | --- | --- | --- |
@@ -19,13 +19,13 @@ Alle acht funktionalen Anforderungen des Antrags sind umgesetzt, dazu die Erweit
 
 ### Erweiterungen nach dem Antrag
 
-Der Kompetenznachweis verlangt für eine Multi-User-Applikation weitere Funktionen, die im genehmigten Antrag nicht standen. Sie wurden nachträglich ergänzt und sind in [spec.md](spec.md) beschrieben.
+Der Kompetenznachweis verlangt für eine Multi-User-Applikation weitere Funktionen, die im genehmigten Antrag nicht standen. Sie wurden nachträglich ergänzt und sind in [spec.md](spec.md) beschrieben, dort auch als Text-Breadboards. Die handgezeichneten Skizzen des Antrags (`breadboard.svg`, `wireframes.svg`) sind unverändert.
 
 | Erweiterung | Was sie tut | Nachweis (Tests) |
 | --- | --- | --- |
 | Benutzerprofil | Jeder Benutzer sieht seine Daten und ändert Name, E-Mail und Passwort (das aktuelle Passwort ist nötig, danach enden die anderen Sitzungen). | `profile_test.rb` |
-| Benutzerverwaltung | Rick legt Benutzer an, ändert Name, E-Mail, Rolle und Passwort und löscht Benutzer. Er kann sich nicht selbst löschen und seine eigene Rolle nicht ändern. | `admin_users_test.rb` |
-| Aktivitätsprotokoll | Rick sieht, wer wann was getan hat: Anmeldungen (auch fehlgeschlagene), Reservierungen, Stornierungen, Änderungen an Portalen, Benutzern und Profilen. Einträge bleiben nach dem Löschen eines Benutzers lesbar. | `activity_log_test.rb` |
+| Benutzerverwaltung | Rick legt Benutzer an, ändert Name, E-Mail, Rolle und Passwort und löscht Benutzer. Er kann sich nicht selbst löschen und seine eigene Rolle nicht ändern, und der letzte Admin kann nie herabgestuft oder gelöscht werden. Ein neues Passwort oder eine neue Rolle beendet die Sitzungen des Benutzers. | `admin_users_test.rb`, `user_test.rb` |
+| Aktivitätsprotokoll | Rick sieht, wer wann was getan hat: Anmeldungen (auch fehlgeschlagene), Reservierungen, Stornierungen, Änderungen an Portalen, Benutzern und Profilen, filterbar nach Aktion und Benutzer. Einträge bleiben nach dem Löschen eines Benutzers lesbar. | `activity_log_test.rb` |
 | Fehlerseiten | 404, 422, 500, 400 und "Browser zu alt" sind deutsch und im Design der Applikation statt der englischen Rails-Standardseiten. | `error_pages_test.rb` |
 
 ### Screens

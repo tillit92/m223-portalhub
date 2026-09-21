@@ -47,7 +47,7 @@ A User who browses Portals, books and cancels their own Bookings, and can change
 _Avoid_: Passenger, customer, Reisender
 
 **Admin**:
-A User (nickname "Rick") who creates, edits and deletes Portals and Users, can view any Booking and cancel any Booking of a Portal that has not departed, and reads the Activity log. An Admin can also book like a Traveler, but cannot book for others, and can neither delete themself nor change their own role, so there is always an Admin.
+A User (nickname "Rick") who creates, edits and deletes Portals and Users, can view any Booking and cancel any Booking of a Portal that has not departed, and reads the Activity log. An Admin can also book like a Traveler, but cannot book for others, and can neither delete themself nor change their own role. The last Admin can never be demoted or deleted, whoever tries.
 _Avoid_: Rick (as a role name in code), operator, superuser
 
 ## Activity log

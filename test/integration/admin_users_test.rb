@@ -68,6 +68,20 @@ class AdminUsersTest < ActionDispatch::IntegrationTest
     assert_select "input[type=password][value]", count: 0
   end
 
+  test "a blank start password is explained in German" do
+    post admin_users_path, params: { user: { name: "Jerry", email_address: "jerry@portalhub.test", role: "traveler", password: "" } }
+
+    assert_response :unprocessable_entity
+    assert_select ".field__error", text: "bitte ausfüllen"
+    assert_no_match(/can't be blank/, response.body)
+  end
+
+  test "a role sent as a list is ignored and cannot make an admin" do
+    post admin_users_path, params: { user: { name: "Jerry", email_address: "jerry@portalhub.test", password: "start-passwort-1", role: [ "admin" ] } }
+
+    assert User.find_by!(email_address: "jerry@portalhub.test").traveler?
+  end
+
   test "an unknown role is refused instead of crashing" do
     assert_no_difference "User.count" do
       post admin_users_path, params: { user: { name: "X", email_address: "x@portalhub.test", role: "superuser", password: "start-passwort-1" } }
@@ -104,7 +118,45 @@ class AdminUsersTest < ActionDispatch::IntegrationTest
     assert_no_match(/von-rick-gesetzt-1/, Activity.order(:id).last.details)
   end
 
-  test "the admin can change his own name but not his own role" do
+  test "resetting a password or changing a role ends the sessions of that user" do
+    beth_session = users(:beth).sessions.create!
+    summer_session = users(:summer).sessions.create!
+
+    patch admin_user_path(users(:beth)), params: { user: { name: "Beth Smith", email_address: "beth@portalhub.test", role: "traveler", password: "von-rick-gesetzt-1" } }
+    patch admin_user_path(users(:summer)), params: { user: { name: "Summer Smith", email_address: "summer@portalhub.test", role: "admin" } }
+
+    assert_not Session.exists?(beth_session.id), "a reset password must end the old session"
+    assert_not Session.exists?(summer_session.id), "a changed role must end the old session"
+    assert_match "Sitzungen beendet", Activity.order(:id).last.details
+  end
+
+  test "changing only the name keeps the sessions of that user" do
+    beth_session = users(:beth).sessions.create!
+
+    patch admin_user_path(users(:beth)), params: { user: { name: "Beth S.", email_address: "beth@portalhub.test", role: "traveler" } }
+
+    assert Session.exists?(beth_session.id)
+  end
+
+  test "the admin setting their own new password stays logged in" do
+    patch admin_user_path(users(:rick)), params: { user: { name: "Rick Sanchez", email_address: "rick@portalhub.test", role: "admin", password: "neues-passwort-42" } }
+
+    assert_redirected_to admin_users_path
+    get admin_users_path
+    assert_response :success
+  end
+
+  test "an admin can demote another admin while they stay admin themself" do
+    other = User.create!(name: "Evil Morty", email_address: "evil@portalhub.test", role: :admin, password: "start-passwort-1")
+
+    patch admin_user_path(other), params: { user: { name: "Evil Morty", email_address: "evil@portalhub.test", role: "traveler" } }
+
+    assert_redirected_to admin_users_path
+    assert other.reload.traveler?
+    assert users(:rick).reload.admin?
+  end
+
+  test "the admin can change their own name but not their own role" do
     patch admin_user_path(users(:rick)), params: { user: { name: "Rick C-137", email_address: "rick@portalhub.test", role: "admin" } }
     assert_redirected_to admin_users_path
     assert_equal "Rick C-137", users(:rick).reload.name
@@ -123,7 +175,7 @@ class AdminUsersTest < ActionDispatch::IntegrationTest
     assert_select "select[name=?][disabled]", "user[role]"
   end
 
-  test "the admin cannot delete himself" do
+  test "the admin cannot delete themself" do
     assert_no_difference "User.count" do
       delete admin_user_path(users(:rick))
     end

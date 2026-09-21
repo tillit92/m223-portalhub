@@ -33,8 +33,9 @@ class Admin::PortalsController < Admin::BaseController
   end
 
   def destroy
+    bookings = @portal.bookings.count
     @portal.destroy!
-    Activity.record("portal_deleted", "hat das Portal #{@portal.name} gelöscht")
+    Activity.record("portal_deleted", "hat das Portal #{@portal.name} gelöscht (#{bookings} Reservierungen entfernt)")
     redirect_to admin_portals_path, notice: "Portal gelöscht."
   end
 
@@ -47,10 +48,7 @@ class Admin::PortalsController < Admin::BaseController
 
     # One entry per real change, naming what changed from what to what.
     def log_changes
-      changes = @portal.saved_changes.slice(*LABELS.keys).map do |attribute, (from, to)|
-        from, to = [ from, to ].map { |value| value.respond_to?(:strftime) ? value.in_time_zone.strftime("%d.%m.%Y, %H:%M") : value }
-        "#{LABELS[attribute]}: #{from} → #{to}"
-      end
+      changes = Activity.change_list(@portal, LABELS)
       return if changes.empty?
 
       Activity.record("portal_updated", "hat das Portal #{@portal.name} geändert (#{changes.join(", ")})")

@@ -75,7 +75,7 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
 
     post portal_bookings_path(portals(:night)), params: { user_id: users(:beth).id }
 
-    assert portals(:night).reserved_by?(users(:rick)), "the seat is booked for the admin himself"
+    assert portals(:night).reserved_by?(users(:rick)), "the seat is booked for the admin themself"
     assert_not portals(:night).reserved_by?(users(:beth)), "and never for the user id in the request"
   end
 

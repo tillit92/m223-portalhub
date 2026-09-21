@@ -3,7 +3,7 @@
 <div class="page__header">
   <h1 class="page__title">Profil</h1>
   <p class="lead">
-    Angemeldet als <span class="tag"><%= @user.admin? ? "Admin" : "Reisender" %></span>
+    Angemeldet als <span class="tag"><%= role_label(@user.role) %></span>
   </p>
 </div>
 
