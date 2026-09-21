@@ -3,14 +3,6 @@
  * show real state, tags and the details layout with the portal on the side.
  */
 
-.mono {
-  font-family: var(--font-mono);
-}
-
-.page__header {
-  margin-bottom: var(--space-12);
-}
-
 /* Portal list */
 
 .portal-list {
@@ -35,7 +27,7 @@
 }
 
 .portal-row__name {
-  font-size: 1.5rem;
+  font-size: var(--text-lg);
 }
 
 .portal-row__meta {
@@ -179,7 +171,7 @@
 }
 
 .empty__title {
-  font-size: 1.5rem;
+  font-size: var(--text-lg);
   font-weight: 650;
   letter-spacing: -0.02em;
 }
@@ -212,9 +204,5 @@
 
   .detail__stage .portal {
     --size: 14rem;
-  }
-
-  .page__header {
-    margin-bottom: var(--space-8);
   }
 }

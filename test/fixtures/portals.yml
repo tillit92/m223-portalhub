@@ -4,7 +4,7 @@ soon:
   departure_time: <%= 1.day.from_now.to_fs(:db) %>
   capacity: 5
 
-late:
+full:
   name: Abend-Portal
   dimension: J19-Zeta-7
   departure_time: <%= 2.days.from_now.to_fs(:db) %>

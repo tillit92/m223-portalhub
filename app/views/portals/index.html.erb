@@ -5,7 +5,7 @@
   <p class="lead">Such dir ein Portal aus und sichere dir deinen Platz.</p>
 </div>
 
-<% if @portals.any? %>
+<% if @portals.present? %>
   <ul class="portal-list">
     <% @portals.each do |portal| %>
       <li class="portal-row">

@@ -16,6 +16,15 @@ class SeedsTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_path
   end
 
+  test "running the seed data again leaves portals and bookings unchanged" do
+    Rails.application.load_seed
+    counts = [ User.count, Portal.count, Booking.count ]
+
+    Rails.application.load_seed
+
+    assert_equal counts, [ User.count, Portal.count, Booking.count ]
+  end
+
   test "the seed data has upcoming portals, a full one and a departed one" do
     2.times { Rails.application.load_seed }
 

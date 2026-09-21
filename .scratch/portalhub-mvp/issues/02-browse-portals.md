@@ -12,6 +12,7 @@
 - [ ] The overview is the home page after login, lists non-departed Portals with the soonest first, and shows "X von Y Plätzen frei" for each
 - [ ] Rows are separated by dividers instead of three identical cards; the seat pips show real state (booked vs. free) and the free count is correct on every load
 - [ ] A Full portal shows "AUSGEBUCHT"; a Departed portal does not appear for Travelers
-- [ ] The details page shows name, Dimension, departure, Capacity, booked and free seats with the portal element and a link back
+- [ ] The details page shows name, Dimension, departure, Capacity, booked and free seats with the portal element and a link back; a Departed portal opened by its link is marked "ABGEFLOGEN"
+- [ ] Free seats are never negative, and a Portal's Capacity must be at least 1
 - [ ] Layout is readable at phone width with a single column
 - [ ] Integration tests cover the list, ordering, hiding departed Portals, the Full portal display and the details page

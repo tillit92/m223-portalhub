@@ -30,10 +30,9 @@ class PortalsTest < ActionDispatch::IntegrationTest
   test "each portal shows its dimension and the free seats out of its capacity" do
     get root_path
 
-    assert_select "main", /C-137/
-    assert_select "main", /2 von 5 Plätzen frei/
-    assert_select "main", /6 von 6 Plätzen frei/
-    assert_select "main", /4 von 4 Plätzen frei/
+    assert_row "Morgen-Portal", /C-137/, /2 von 5 Plätzen frei/
+    assert_row "Nacht-Portal", /C-500/, /6 von 6 Plätzen frei/
+    assert_row "Cronenberg-Express", /Cronenberg-Welt/, /4 von 4 Plätzen frei/
   end
 
   test "the departure is shown in Swiss time" do
@@ -47,15 +46,20 @@ class PortalsTest < ActionDispatch::IntegrationTest
   test "the seat pips draw the booked seats out of the capacity" do
     get root_path
 
-    assert_select "[role=img][aria-label=?]", "3 von 5 Plätzen belegt"
-    assert_select "[role=img][aria-label=?]", "0 von 4 Plätzen belegt"
+    assert_select ".seats[aria-label=?]", "3 von 5 Plätzen belegt" do
+      assert_select ".seat", 5
+      assert_select ".seat--taken", 3
+    end
+    assert_select ".seats[aria-label=?]", "0 von 4 Plätzen belegt" do
+      assert_select ".seat", 4
+      assert_select ".seat--taken", 0
+    end
   end
 
   test "a full portal stays in the list and is marked as fully booked" do
     get root_path
 
-    assert_select "main", /Abend-Portal/
-    assert_select "main", /0 von 3 Plätzen frei/
+    assert_row "Abend-Portal", /0 von 3 Plätzen frei/, /AUSGEBUCHT/
     assert_select ".tag", text: "AUSGEBUCHT", count: 1
   end
 
@@ -65,6 +69,30 @@ class PortalsTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_select "main", /3 von 5 Plätzen frei/
+  end
+
+  test "a portal with more bookings than capacity never shows negative free seats" do
+    portals(:soon).update_column(:capacity, 2)
+
+    get root_path
+    assert_row "Morgen-Portal", /0 von 2 Plätzen frei/, /AUSGEBUCHT/
+
+    get portal_path(portals(:soon))
+    assert_select "main", /Frei\s+0/
+  end
+
+  test "a portal is listed until its departure time and then leaves the overview" do
+    departure = portals(:soon).departure_time
+
+    travel_to departure do
+      get root_path
+      assert_select "main h2", "Morgen-Portal"
+    end
+
+    travel_to departure + 1.second do
+      get root_path
+      assert_select "main h2", text: "Morgen-Portal", count: 0
+    end
   end
 
   test "the overview shows an empty state when no portal is left" do
@@ -89,7 +117,7 @@ class PortalsTest < ActionDispatch::IntegrationTest
   end
 
   test "the details page of a full portal is marked as fully booked" do
-    get portal_path(portals(:late))
+    get portal_path(portals(:full))
 
     assert_select ".tag", text: "AUSGEBUCHT"
     assert_select "main", /Frei\s+0/
@@ -107,4 +135,11 @@ class PortalsTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  private
+    def assert_row(name, *patterns)
+      row = css_select("main li").find { |item| item.at_css("h2").text.strip == name }
+      assert row, "expected a row for #{name}"
+      patterns.each { |pattern| assert_match pattern, row.text }
+    end
 end

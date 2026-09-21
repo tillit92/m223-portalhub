@@ -11,18 +11,18 @@ rick_soon:
   user: rick
   portal: soon
 
-# late: 3 von 3 belegt (voll)
-morty_late:
+# full: 3 von 3 belegt (voll)
+morty_full:
   user: morty
-  portal: late
+  portal: full
 
-summer_late:
+summer_full:
   user: summer
-  portal: late
+  portal: full
 
-rick_late:
+rick_full:
   user: rick
-  portal: late
+  portal: full
 
 # departed
 morty_departed:
