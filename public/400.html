@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="dark">
     <title>Ungültige Anfrage - PortalHub</title>
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="icon" href="/icon.png" type="image/png">
     <style>
       /* Standalone on purpose: these pages must work even when the app is down. */
       *, *::before, *::after { box-sizing: border-box; }
@@ -23,28 +23,7 @@
         -webkit-font-smoothing: antialiased;
       }
       main { max-width: 34rem; text-align: center; }
-      .portal {
-        position: relative;
-        width: 9rem;
-        aspect-ratio: 1;
-        margin: 0 auto 2.5rem;
-        border-radius: 50%;
-        filter: drop-shadow(0 0 2rem rgb(139 227 106 / 0.35));
-      }
-      .portal::before, .portal::after { content: ""; position: absolute; border-radius: 50%; }
-      .portal::before {
-        inset: 0;
-        background: conic-gradient(from 0deg, #8be36a, #2e8a3f 16%, #a9f28a 32%, #1d5b2d 50%, #8be36a 66%, #2e8a3f 82%, #8be36a);
-        -webkit-mask: radial-gradient(farthest-side, transparent 66%, #000 68%);
-        mask: radial-gradient(farthest-side, transparent 66%, #000 68%);
-        animation: spin 20s linear infinite;
-      }
-      .portal::after {
-        inset: 22%;
-        background: radial-gradient(circle, #030704 0%, #071a0c 60%, rgb(139 227 106 / 0.32) 100%);
-        box-shadow: inset 0 0 1.5rem rgb(139 227 106 / 0.35);
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
+      .rick { display: block; width: auto; height: 13rem; margin: 0 auto 2rem; }
       h1 { margin: 0; font-size: clamp(2rem, 6vw, 2.75rem); line-height: 1.1; letter-spacing: -0.03em; }
       p { margin: 1rem 0 0; color: #9aaba0; font-size: 1.1rem; }
       .code { margin-top: 2rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9rem; }
@@ -62,12 +41,11 @@
       }
       .button:hover { background: #a9f28a; }
       .button:focus-visible { outline: 2px solid #8be36a; outline-offset: 3px; }
-      @media (prefers-reduced-motion: reduce) { .portal::before { animation: none; } }
     </style>
   </head>
   <body>
     <main>
-      <div class="portal" aria-hidden="true"></div>
+      <img class="rick" src="/bilder/rick1.gif" width="259" height="498" alt="Rick, aufgebracht">
       <h1>Diese Anfrage ergibt keinen Sinn</h1>
       <p>Der Server hat sie nicht verstanden. Versuche es von der Übersicht aus noch einmal.</p>
       <a class="button" href="/">Zurück zur Übersicht</a>

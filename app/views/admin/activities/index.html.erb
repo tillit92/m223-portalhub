@@ -39,7 +39,7 @@
         <% @activities.each do |activity| %>
           <tr>
             <td class="table__nowrap mono"><%= activity_time(activity) %></td>
-            <th scope="row"><%= activity.user_name || "Unbekannt" %></th>
+            <th scope="row"><span class="person"><%= avatar_tag(activity.user, size: :medium, name: activity.user_name) if activity.user_name || activity.user %><%= activity.user_name || "Unbekannt" %></span></th>
             <td class="table__nowrap"><span class="tag <%= "tag--full" if activity.action == "login_failed" %>"><%= activity.action_label %></span></td>
             <td><%= activity.details %></td>
           </tr>

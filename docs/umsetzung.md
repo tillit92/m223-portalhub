@@ -26,6 +26,7 @@ Der Kompetenznachweis verlangt für eine Multi-User-Applikation weitere Funktion
 | Benutzerprofil | Jeder Benutzer sieht seine Daten und ändert Name, E-Mail und Passwort (das aktuelle Passwort ist nötig, danach enden die anderen Sitzungen). | `profile_test.rb` |
 | Benutzerverwaltung | Rick legt Benutzer an, ändert Name, E-Mail, Rolle und Passwort und löscht Benutzer. Er kann sich nicht selbst löschen und seine eigene Rolle nicht ändern, und der letzte Admin kann nie herabgestuft oder gelöscht werden. Ein neues Passwort oder eine neue Rolle beendet die Sitzungen des Benutzers. | `admin_users_test.rb`, `user_test.rb` |
 | Aktivitätsprotokoll | Rick sieht, wer wann was getan hat: Anmeldungen (auch fehlgeschlagene), Reservierungen, Stornierungen, Änderungen an Portalen, Benutzern und Profilen, filterbar nach Aktion und Benutzer. Einträge bleiben nach dem Löschen eines Benutzers lesbar. | `activity_log_test.rb` |
+| Avatare | Jeder Benutzer wählt im Profil ein Bild aus einer festen Auswahl von fünf Figuren oder keines (dann Initialen). Kein Upload. Rick kann Bilder in der Benutzerverwaltung zuweisen. Die Bilder erscheinen in Navigation, Benutzerliste und Protokoll. | `avatars_test.rb`, `user_test.rb` |
 | Fehlerseiten | 404, 422, 500, 400 und "Browser zu alt" sind deutsch und im Design der Applikation statt der englischen Rails-Standardseiten. | `error_pages_test.rb` |
 
 ### Screens
@@ -47,7 +48,7 @@ Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu reservieren, e
 
 | Tabelle | Spalten |
 | --- | --- |
-| `users` | `id`, `name`, `email_address` (eindeutig), `password_digest`, `role` (`traveler` oder `admin`) |
+| `users` | `id`, `name`, `email_address` (eindeutig), `password_digest`, `role` (`traveler` oder `admin`), `avatar` (Schlüssel aus einer festen Auswahl oder leer) |
 | `portals` | `id`, `name`, `dimension`, `departure_time`, `capacity` |
 | `bookings` | `id`, `user_id`, `portal_id`, eindeutig pro Paar `user_id` und `portal_id` |
 | `sessions` | `id`, `user_id`, `ip_address`, `user_agent` (Anmeldung, nicht Teil des fachlichen Modells) |

@@ -20,7 +20,10 @@
             <% if Current.user.admin? %>
               <%= link_to "Admin", admin_portals_path, class: "site-nav__link", aria: { current: request.path.start_with?("/admin") ? "page" : nil } %>
             <% end %>
-            <%= link_to Current.user.name, profile_path, class: "site-nav__link site-nav__user", aria: { current: current_page?(profile_path) ? "page" : nil } %>
+            <span class="site-nav__person">
+              <%= avatar_tag(Current.user, size: :small) %>
+              <%= link_to Current.user.name, profile_path, class: "site-nav__link site-nav__user", aria: { current: current_page?(profile_path) ? "page" : nil } %>
+            </span>
             <%= button_to "Abmelden", session_path, method: :delete, class: "button button--ghost button--small" %>
           <% end %>
         </nav>

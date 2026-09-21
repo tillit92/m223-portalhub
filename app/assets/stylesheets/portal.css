@@ -1,84 +1,7 @@
 /*
- * The signature element: a swirling green portal built from gradients,
- * plus the asymmetric split-screen login layout that presents it.
+ * The asymmetric split-screen login: the portal GIF and the portal gun on the
+ * left, the form on the right.
  */
-
-.portal {
-  --size: min(34rem, 78vw);
-  position: relative;
-  isolation: isolate;
-  width: var(--size);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  filter: drop-shadow(0 0 3rem var(--accent-glow));
-}
-
-.portal::before,
-.portal__swirl {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-}
-
-/* Thin bright rim */
-.portal::before {
-  inset: 0;
-  background: conic-gradient(
-    from 0deg,
-    var(--accent),
-    var(--accent-deep) 16%,
-    var(--accent-strong) 32%,
-    var(--accent-dark) 50%,
-    var(--accent) 66%,
-    var(--accent-deep) 82%,
-    var(--accent)
-  );
-  -webkit-mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
-  mask: radial-gradient(farthest-side, transparent 86%, #000 88%);
-  animation: portal-spin 20s linear infinite;
-}
-
-/* Swirling arms that fade toward the rim and the core */
-.portal__swirl {
-  inset: 4%;
-  background: repeating-conic-gradient(
-    from 0deg,
-    color-mix(in srgb, var(--accent-strong) 95%, transparent) 0deg,
-    color-mix(in srgb, var(--accent-deep) 55%, transparent) 22deg,
-    transparent 46deg,
-    color-mix(in srgb, var(--accent) 80%, transparent) 60deg
-  );
-  -webkit-mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
-  mask: radial-gradient(farthest-side, transparent 24%, #000 52%, #000 74%, transparent 90%);
-  animation: portal-spin 14s linear infinite reverse;
-}
-
-/* Dark, glowing heart of the portal */
-.portal__core {
-  position: absolute;
-  inset: 26%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, var(--portal-void) 0%, var(--portal-deep) 60%, color-mix(in srgb, var(--accent) 32%, transparent) 100%);
-  box-shadow: 0 0 3rem color-mix(in srgb, var(--accent) 50%, transparent), inset 0 0 3rem var(--accent-glow);
-  animation: portal-pulse 7s ease-in-out infinite;
-}
-
-@keyframes portal-spin {
-  to { transform: rotate(360deg); }
-}
-
-@keyframes portal-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .portal::before,
-  .portal__swirl,
-  .portal__core {
-    animation: none;
-  }
-}
 
 /* Login: asymmetric split screen */
 
@@ -89,6 +12,7 @@
 }
 
 .auth__stage {
+  position: relative;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -99,9 +23,23 @@
     var(--surface);
 }
 
-.auth__stage .portal {
-  --size: min(36rem, 46vw);
-  margin-left: -6vw;
+/* The portal GIF is portrait; its glow is the only glow on the page besides focus. */
+.auth__portal {
+  width: auto;
+  height: min(40rem, 78vh);
+  margin-left: -4vw;
+  filter: drop-shadow(0 0 3rem var(--accent-glow));
+}
+
+/* The portal gun lies in front of the portal, at the lower left of the stage. */
+.auth__gun {
+  position: absolute;
+  left: -3%;
+  bottom: 0;
+  width: min(38rem, 68%);
+  height: auto;
+  transform: rotate(-9deg);
+  pointer-events: none;
 }
 
 .auth__panel {
@@ -121,6 +59,10 @@
 }
 
 @media (max-width: 48rem) {
+  .auth__gun {
+    display: none;
+  }
+
   .auth {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -133,9 +75,9 @@
     border-bottom: 1px solid var(--line);
   }
 
-  .auth__stage .portal {
-    --size: 20rem;
-    margin: 4rem 0 0;
+  .auth__portal {
+    height: 14rem;
+    margin: 0;
   }
 
   .auth__panel {

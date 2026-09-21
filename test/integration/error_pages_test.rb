@@ -23,6 +23,29 @@ class ErrorPagesTest < ActionDispatch::IntegrationTest
     end
   end
 
+  # file => the Rick GIF that page shows
+  RICK = {
+    "404.html" => "rick1.gif", "422.html" => "rick1.gif", "400.html" => "rick1.gif",
+    "500.html" => "rick2.gif", "406-unsupported-browser.html" => "rick2.gif"
+  }.freeze
+
+  test "every error page shows a Rick GIF with an alt text" do
+    RICK.each do |file, gif|
+      get "/#{file}"
+
+      assert_select "img.rick[src=?][alt]", "/bilder/#{gif}"
+    end
+  end
+
+  test "the Rick GIFs for the error pages are served" do
+    %w[ rick1.gif rick2.gif ].each do |gif|
+      get "/bilder/#{gif}"
+
+      assert_response :success
+      assert_equal "image/gif", response.media_type
+    end
+  end
+
   test "pages you can leave offer a way back to the overview" do
     %w[ 404.html 422.html 500.html 400.html ].each do |file|
       get "/#{file}"

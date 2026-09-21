@@ -1,0 +1,21 @@
+<%# The fixed set of avatars as radio buttons with pictures, plus "Keins" (then the initials show). %>
+<fieldset class="avatar-picker <%= "field--error" if record.errors[:avatar].any? %>">
+  <legend>Bild</legend>
+  <div class="avatar-picker__options">
+    <label class="avatar-option">
+      <%= form.radio_button :avatar, "", checked: record.avatar.blank? %>
+      <%= avatar_tag(nil, size: :large, name: record.name.presence || "?") %>
+      <span>Keins</span>
+    </label>
+    <% User::AVATARS.each do |key, label| %>
+      <label class="avatar-option">
+        <%= form.radio_button :avatar, key %>
+        <%= image_tag "#{key}.png", alt: "", class: "avatar avatar--large" %>
+        <span><%= label %></span>
+      </label>
+    <% end %>
+  </div>
+  <% record.errors[:avatar].each do |message| %>
+    <p class="field__error"><%= message %></p>
+  <% end %>
+</fieldset>

@@ -158,9 +158,6 @@
   place-items: center;
 }
 
-.detail__stage .portal {
-  --size: min(26rem, 90%);
-}
 
 .detail__action {
   display: grid;
@@ -190,9 +187,11 @@
   text-align: center;
 }
 
-.empty .portal {
-  --size: 9rem;
-  margin-bottom: var(--space-6);
+.empty__image {
+  display: block;
+  width: auto;
+  height: 12rem;
+  margin-bottom: var(--space-4);
 }
 
 .empty__title {
@@ -231,7 +230,4 @@
     overflow: hidden;
   }
 
-  .detail__stage .portal {
-    --size: 14rem;
-  }
 }

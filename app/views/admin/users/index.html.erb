@@ -24,7 +24,7 @@
     <tbody>
       <% @users.each do |user| %>
         <tr>
-          <th scope="row"><%= user.name %></th>
+          <th scope="row"><span class="person"><%= avatar_tag(user, size: :medium) %><%= user.name %></span></th>
           <td class="mono"><%= user.email_address %></td>
           <td><span class="tag"><%= role_label(user.role) %></span></td>
           <td class="table__number mono"><%= user.bookings.size %></td>

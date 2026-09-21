@@ -40,7 +40,12 @@ class Activity < ApplicationRecord
   # "Kapazität: 4 → 6" for every attribute of `record` that really changed.
   def self.change_list(record, labels)
     record.saved_changes.slice(*labels.keys).map do |attribute, (from, to)|
-      from, to = [ from, to ].map { |value| value.respond_to?(:strftime) ? value.in_time_zone.strftime("%d.%m.%Y, %H:%M") : value }
+      from, to = [ from, to ].map do |value|
+        if value.nil? then "(leer)"
+        elsif value.respond_to?(:strftime) then value.in_time_zone.strftime("%d.%m.%Y, %H:%M")
+        else value
+        end
+      end
       "#{labels[attribute]}: #{from} → #{to}"
     end
   end

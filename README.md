@@ -1,6 +1,6 @@
 # PortalHub
 
-Multiuser-Webapplikation im Stil von Rick and Morty (Modul M223). Reisende sehen Portale zu verschiedenen Dimensionen und reservieren einen Platz für die Reise. Ein Portal nimmt nie mehr Reservierungen an, als es Plätze hat, auch wenn mehrere Reisende gleichzeitig um den letzten Platz konkurrieren. Rick (Admin) verwaltet Portale, Reservierungen und Benutzer und sieht ein Aktivitätsprotokoll. Jeder Benutzer kann sein Profil und Passwort ändern.
+Multiuser-Webapplikation im Stil von Rick and Morty (Modul M223). Reisende sehen Portale zu verschiedenen Dimensionen und reservieren einen Platz für die Reise. Ein Portal nimmt nie mehr Reservierungen an, als es Plätze hat, auch wenn mehrere Reisende gleichzeitig um den letzten Platz konkurrieren. Rick (Admin) verwaltet Portale, Reservierungen und Benutzer und sieht ein Aktivitätsprotokoll. Jeder Benutzer kann sein Profil und Passwort ändern und ein Bild aus einer festen Auswahl wählen.
 
 ![Portalübersicht](docs/screenshots/03-portaluebersicht.png)
 
@@ -77,6 +77,10 @@ bin/ci                                                  # alles wie in der Abgab
 Die Bestätigungsdialoge (Stornieren, Löschen) brauchen echtes JavaScript und lassen sich deshalb nicht mit Rails-Tests prüfen. Dafür gibt es `node script/browser_check.mjs` (Node 22 oder neuer, ein Chromium-Browser wie Brave oder Chrome, laufender Server). Der Test verändert die Entwicklungsdaten, danach `bin/rails db:seed` ausführen. Details im Kopf des Skripts.
 
 Die Tests prüfen die zentrale Fachregel (nie mehr Reservierungen als Plätze, auch bei gleichzeitigen Anfragen) sowie erlaubte und verweigerte Zugriffe für Besucher, Reisende und Admin. Wie die Sperre funktioniert und was die Tests beweisen, steht in [docs/adr/0002-capacity-enforced-with-portal-lock.md](docs/adr/0002-capacity-enforced-with-portal-lock.md).
+
+## Bildnachweis
+
+Die Bilder (Portal, Portal Gun, Rick und die Avatare) stammen aus der Serie Rick and Morty (© Adult Swim) und werden nur für dieses Schulprojekt verwendet. Die Schrift Geist steht unter der SIL Open Font License.
 
 ## Weitere Dokumentation
 

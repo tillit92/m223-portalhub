@@ -37,6 +37,18 @@ class UserTest < ActiveSupport::TestCase
     assert users(:morty).destroy
   end
 
+  test "an avatar must be one of the fixed set, and a blank one means none" do
+    user = users(:morty)
+
+    user.avatar = "nicht-im-set"
+    assert_not user.valid?
+    assert_includes user.errors[:avatar], "ist nicht erlaubt"
+
+    user.avatar = ""
+    assert user.valid?
+    assert_nil user.avatar
+  end
+
   test "the password errors are in German" do
     user = User.new(name: "X", email_address: "x@portalhub.test", password: "", password_confirmation: "")
     user.valid?
