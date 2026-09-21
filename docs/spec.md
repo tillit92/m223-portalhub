@@ -63,8 +63,8 @@ Ein Portal hat eine maximale Kapazität (z.B. 5 Reisende) – nicht mehr Persone
 **USER**
 - id (PK)
 - name
-- email
-- password
+- email_address (im Antrag: email)
+- password_digest (im Antrag: password, gespeichert wird nur der Hash)
 - role
 
 **PORTAL**
@@ -80,6 +80,8 @@ Ein Portal hat eine maximale Kapazität (z.B. 5 Reisende) – nicht mehr Persone
 - portal_id (FK)
 
 **Beziehungen:** USER 1—n BOOKING, PORTAL 1—n BOOKING
+
+Zusätzlich gibt es die Tabelle `sessions` (angemeldete Benutzer, vom Rails-Authentifizierungsgenerator). Sie gehört nicht zum fachlichen Modell und steht deshalb nicht im ERM des Antrags. Das Diagramm des Antrags ist `docs/diagrams/erm.svg`, das Diagramm mit den umgesetzten Spaltennamen `docs/diagrams/erm-umgesetzt.svg`.
 
 **Regel:** Anzahl BOOKING pro PORTAL ≤ PORTAL.capacity | freie Plätze = capacity − Anzahl Bookings
 

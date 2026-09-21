@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 510" width="740" height="510">
+<style>
+  .bg{fill:#fff}
+  .box{fill:#fff;stroke:#1a1a1a;stroke-width:4;stroke-linejoin:round}
+  .ln{stroke:#1a1a1a;stroke-width:3;stroke-linecap:round}
+  .thin{stroke:#1a1a1a;stroke-width:2;stroke-linecap:round}
+  text{font-family:'Comic Sans MS','Chalkboard SE','Segoe Print',cursive,sans-serif;fill:#1a1a1a}
+  .t{font-size:22px;font-weight:bold}
+  .a{font-size:16px}
+  .c{font-size:19px;font-weight:bold}
+  .n{font-size:15px;font-style:italic}
+</style>
+<rect class="bg" x="0" y="0" width="740" height="510"/>
+
+<!-- USER -->
+<rect class="box" x="40" y="50" width="200" height="185" rx="6"/>
+<text class="t" x="140" y="80" text-anchor="middle">USER</text>
+<line class="thin" x1="55" y1="92" x2="225" y2="92"/>
+<text class="a" x="60" y="118">id  (PK)</text>
+<text class="a" x="60" y="143">name</text>
+<text class="a" x="60" y="168">email_address</text>
+<text class="a" x="60" y="193">password_digest</text>
+<text class="a" x="60" y="218">role</text>
+
+<!-- PORTAL -->
+<rect class="box" x="500" y="50" width="200" height="185" rx="6"/>
+<text class="t" x="600" y="80" text-anchor="middle">PORTAL</text>
+<line class="thin" x1="515" y1="92" x2="685" y2="92"/>
+<text class="a" x="520" y="118">id  (PK)</text>
+<text class="a" x="520" y="143">name</text>
+<text class="a" x="520" y="168">dimension</text>
+<text class="a" x="520" y="193">departure_time</text>
+<text class="a" x="520" y="218">capacity</text>
+
+<!-- BOOKING -->
+<rect class="box" x="265" y="300" width="210" height="130" rx="6"/>
+<text class="t" x="370" y="330" text-anchor="middle">BOOKING</text>
+<line class="thin" x1="280" y1="342" x2="460" y2="342"/>
+<text class="a" x="285" y="368">id  (PK)</text>
+<text class="a" x="285" y="393">user_id  (FK)</text>
+<text class="a" x="285" y="418">portal_id  (FK)</text>
+
+<!-- relations -->
+<line class="ln" x1="150" y1="235" x2="300" y2="300"/>
+<text class="c" x="128" y="262">1</text>
+<text class="c" x="288" y="288">n</text>
+
+<line class="ln" x1="590" y1="235" x2="440" y2="300"/>
+<text class="c" x="600" y="262">1</text>
+<text class="c" x="448" y="288">n</text>
+
+<!-- rule -->
+<text class="n" x="40" y="462">Regel:  Anzahl BOOKING pro PORTAL  &#8804;  PORTAL.capacity      |      freie Plaetze = capacity &#8722; Anzahl Bookings</text>
+<text class="n" x="40" y="486">Umgesetzt: email_address und password_digest (Rails-Anmeldung); zusaetzlich Tabelle sessions (Anmeldung, nicht im ERM des Antrags).</text>
+</svg>

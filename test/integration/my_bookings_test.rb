@@ -48,6 +48,16 @@ class MyBookingsTest < ActionDispatch::IntegrationTest
     assert_select "main a[href=?]", root_path
   end
 
+  test "the page links back to the overview, with and without bookings" do
+    sign_in_as users(:morty)
+    get bookings_path
+    assert_select "main a[href=?]", root_path, text: /Zurück zur Übersicht/
+
+    sign_in_as users(:beth)
+    get bookings_path
+    assert_select "main a[href=?]", root_path, text: /Zurück zur Übersicht/
+  end
+
   test "the navigation links to my bookings" do
     sign_in_as users(:morty)
 
