@@ -1,0 +1,118 @@
+# PortalHub: Umsetzung und Prüfung
+
+Stand: 21.09.2026. Diese Datei ergänzt [spec.md](spec.md) (Was und Warum) um den erreichten Stand, die Abweichungen vom genehmigten Antrag, offene Punkte und die Prüfung der Anforderungen mit ihren Ergebnissen. Wie die Applikation ausgeführt wird, steht in der [README](../README.md).
+
+## 1. Erreichter Stand
+
+Alle acht funktionalen Anforderungen des Antrags sind umgesetzt. Die Tests laufen vollständig durch (79 Tests, `bin/rails test`), ebenso das gesamte lokale CI (`bin/ci`: Rubocop, bundler-audit, importmap-Audit, Brakeman, Tests, Seed-Lauf).
+
+| Nr. | Funktionale Anforderung | Ergebnis | Nachweis (Tests) |
+| --- | --- | --- | --- |
+| 1 | Benutzer können sich anmelden | erfüllt | `authentication_test.rb` |
+| 2 | Benutzer können verfügbare Portale ansehen | erfüllt | `portals_test.rb` |
+| 3 | Benutzer sehen die Anzahl der freien Plätze | erfüllt | `portals_test.rb` (Liste, Details, Sitzpunkte) |
+| 4 | Benutzer können einen Platz reservieren | erfüllt | `bookings_test.rb` |
+| 5 | Benutzer können ihre Reservierungen ansehen | erfüllt | `my_bookings_test.rb` |
+| 6 | Benutzer können ihre Reservierungen stornieren | erfüllt | `my_bookings_test.rb` |
+| 7 | Ein Administrator kann Portale erstellen, bearbeiten und löschen | erfüllt | `admin_portals_test.rb`, `admin_bookings_test.rb` |
+| 8 | Ein Portal darf seine maximale Kapazität nicht überschreiten | erfüllt | `portal_concurrency_test.rb`, `bookings_test.rb`, `admin_portals_test.rb` |
+
+### Screens
+
+| | |
+| --- | --- |
+| ![Anmelden](screenshots/01-login.png) Anmelden | ![Anmelden, falsches Passwort](screenshots/02-login-fehler.png) Falsches Passwort: Meldung, die E-Mail bleibt stehen |
+| ![Portalübersicht](screenshots/03-portaluebersicht.png) Portalübersicht mit freien Plätzen, Sitzpunkten und AUSGEBUCHT | ![Portal-Details](screenshots/04-portal-details.png) Details mit Platz reservieren |
+| ![Volles Portal](screenshots/05-portal-voll.png) Volles Portal: Button inaktiv | ![Reservierung bestätigt](screenshots/06-reservierung-bestaetigt.png) Nach dem Reservieren: Meldung und neue Reservierung |
+| ![Meine Reservierungen](screenshots/07-meine-reservierungen.png) Meine Reservierungen | ![Admin: Portale](screenshots/08-admin-portale.png) Admin: alle Portale |
+| ![Admin: Formularfehler](screenshots/09-admin-formular-fehler.png) Admin: Kapazität unter der Zahl der Reservierungen | ![Admin: Reservierungen](screenshots/10-admin-reservierungen.png) Admin: Reservierungen eines Portals |
+
+Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu buchen, erscheint auf der Detailseite. Sie ist in `bookings_test.rb` geprüft.
+
+### ERM, wie umgesetzt
+
+| Tabelle | Spalten |
+| --- | --- |
+| `users` | `id`, `name`, `email_address` (eindeutig), `password_digest`, `role` (`traveler` oder `admin`) |
+| `portals` | `id`, `name`, `dimension`, `departure_time`, `capacity` |
+| `bookings` | `id`, `user_id`, `portal_id`, eindeutig pro Paar `user_id` und `portal_id` |
+| `sessions` | `id`, `user_id`, `ip_address`, `user_agent` (Anmeldung, nicht Teil des fachlichen Modells) |
+
+Beziehungen: `users` 1 zu n `bookings`, `portals` 1 zu n `bookings`. Freie Plätze werden nie gespeichert, sondern immer als Kapazität minus Anzahl Reservierungen berechnet. Diagramme: [erm.svg](diagrams/erm.svg) (Antrag) und [erm-umgesetzt.svg](diagrams/erm-umgesetzt.svg) (mit den umgesetzten Spaltennamen).
+
+## 2. Abweichungen vom genehmigten Antrag
+
+Die vollständige Liste mit Begründung steht in [spec.md](spec.md), Abschnitt "Präzisierungen und Abweichungen nach der Genehmigung". Die wichtigsten:
+
+- **Spaltennamen:** `email_address` und `password_digest` statt `email` und `password`. Der Rails-Authentifizierungsgenerator verwendet diese Namen, und ein Klartext-Passwort darf nicht gespeichert werden. Dazu kommt die Tabelle `sessions`.
+- **Qualitätsattribute:** Aus sechs allgemeinen Aussagen wurden fünf überprüfbare, weil die Wegleitung "sicher" oder "benutzerfreundlich" allein nicht genügen lässt.
+- **Ein Portal ist ein einmaliger Abflug** mit Datum und Uhrzeit, keine wiederkehrende Verbindung ([ADR-0001](adr/0001-portal-is-a-one-off-departure.md)). Die Wireframes zeigen der Kürze halber nur die Uhrzeit.
+- **Fehlende Berechtigung:** Ein Reisender, der eine Admin-Seite aufruft, wird auf die Startseite geleitet und sieht dort "Berechtigung fehlt." statt einer eigenen Fehlerseite.
+- **Mobile Ansicht** ist kein Ziel. Die Applikation ist für den Desktop-Browser gebaut, einfache einspaltige Fallbacks sind vorhanden, aber nicht geprüft.
+- **Sperre bei der Kapazitätsänderung:** Sie läuft wie beim Reservieren unter `Portal#with_lock`. Auf SQLite ist die explizite Sperre dort allerdings redundant, weil `save` bereits eine eigene Schreibtransaktion um die Validierung öffnet (Begründung und Konsequenz in [ADR-0002](adr/0002-capacity-enforced-with-portal-lock.md)). Beim Reservieren ist sie dagegen zwingend nötig.
+
+## 3. Prüfung der Qualitätsattribute
+
+### 1. Datenkonsistenz: erfüllt
+
+Anforderung: Versuchen zehn Reisende gleichzeitig, den letzten freien Platz zu reservieren, wird genau eine Reservierung gespeichert.
+
+- `test/models/portal_concurrency_test.rb` startet zehn Threads mit je eigener Datenbankverbindung und prüft: genau eine Reservierung gelingt, neun sehen das volle Portal, in der Datenbank steht genau eine Buchung. Ein zweiter Fall prüft dasselbe für ein Portal mit vier Plätzen.
+- **Grenze dieses Tests:** Das Zeitfenster zwischen Zählen und Buchen ist so klein, dass dieser Test auch ohne Sperre bestand. Er beweist die Sperre deshalb nicht allein.
+- **Der eigentliche Beweis** ist ein weiterer Test in derselben Datei: Eine Reservierung wird mitten in ihrer Transaktion festgehalten, während eine zweite versucht, denselben letzten Platz zu buchen. Mit `with_lock` muss die zweite warten und sieht das volle Portal. Entfernt man `with_lock` aus `Portal#reserve_seat_for`, schlägt dieser Test fehl (so geprüft).
+- Die Suite lief wiederholt (fünf volle Durchläufe hintereinander) ohne Ausfall.
+
+### 2. Berechtigungen: erfüllt
+
+Anforderung: Ein Reisender, der eine Admin-Seite aufruft, sieht "Berechtigung fehlt" und verändert nichts. Ein nicht angemeldeter Benutzer wird zum Login geleitet und kann nicht reservieren.
+
+- `test/integration/admin_access_test.rb` ruft **alle acht** Admin-Endpunkte (Liste, neu, anlegen, bearbeiten, ändern, löschen, Reservierungen ansehen, Reservierung stornieren) als Besucher und als Reisender auf und vergleicht vorher und nachher den Datenbestand: Es ändert sich nichts. Der Admin kommt auf alle Seiten.
+- Besucher werden auch bei Reservieren, "Meine Reservierungen" und Stornieren zum Login geleitet (`bookings_test.rb`, `my_bookings_test.rb`).
+- Fremde Reservierungen sind für Reisende ein 404, auch für Rick über den Reisenden-Weg. Beim Reservieren wird eine mitgeschickte fremde `user_id` ignoriert.
+
+### 3. Reaktionszeit: erfüllt
+
+Anforderung: Die Portalübersicht mit 100 Portalen wird bei zehn gleichzeitigen Anfragen innerhalb von 2 Sekunden ausgeliefert.
+
+- **Aufbau:** Frische Kopie des Projekts, Entwicklungsserver (`bin/dev`), 104 kommende Portale mit insgesamt 307 Reservierungen, angemeldet als Reisender. Fünf Runden mit je zehn gleichzeitigen Anfragen an die Übersicht (`curl` mit zehn Prozessen). Die Seite hatte 104 Portalzeilen und rund 87 KB.
+- **Ergebnis:** Die langsamste Anfrage dauerte in allen fünf Runden höchstens 0,125 Sekunden, die schnellste 0,018 Sekunden. Alle 50 Anfragen antworteten mit Status 200.
+- **Einschränkung:** Gemessen lokal im Entwicklungsmodus, auf dem Entwicklungsrechner und ohne Netzwerk. Im Produktionsmodus ist die Applikation eher schneller. Die Übersicht lädt die Reservierungen mit `includes`, es gibt keine Abfrage pro Zeile.
+
+### 4. Bedienbarkeit: erfüllt
+
+Anforderung: Ein angemeldeter Reisender erreicht die Reservierung eines Platzes von der Portalübersicht aus in höchstens zwei Klicks und erhält eine Bestätigung.
+
+- Weg: Übersicht, Klick auf "Details", Klick auf "Platz reservieren". Das sind zwei Klicks. Danach landet der Reisende auf "Meine Reservierungen" mit der Meldung "Platz reserviert. Gute Reise!" (siehe Screenshot 06).
+- Geprüft am Aufbau der Seiten und durch die Integrationstests, die genau diesen Ablauf nachspielen. Ein Durchlauf mit einer echten Testperson ist nicht erfolgt.
+
+### 5. Kompatibilität: teilweise geprüft
+
+Anforderung: Login, Portalübersicht, Reservierung und Stornierung funktionieren in den aktuellen Versionen von Chrome, Firefox und Safari.
+
+| Browser | Ergebnis |
+| --- | --- |
+| Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Die Abläufe sind über die Integrationstests abgedeckt. |
+| Firefox | **Nicht geprüft.** Auf dem Entwicklungsrechner ist Firefox nicht installiert. |
+| Safari | **Nicht geprüft.** Safari ist auf dem Entwicklungsrechner vorhanden, die automatische Steuerung ist aber ausgeschaltet (Versuch mit `safaridriver`: "Allow remote automation" in den Safari-Einstellungen unter "Entwickler" ist nicht aktiviert). Die Einstellung wurde bewusst nicht verändert. |
+
+Was sich ohne Browser sagen lässt: Die Applikation lässt über `allow_browser :modern` nur Safari ab 17.2, Chrome ab 120, Firefox ab 121 und Opera ab 106 zu und weist ältere Browser ab. Die eingesetzten CSS-Funktionen (`color-mix`, `conic-gradient`, `mask`, `100dvh`, `:focus-visible`, `aspect-ratio`) werden nach meinem Kenntnisstand von diesen Versionen unterstützt. Das ist keine Messung und sollte an den Browsern selbst gegengeprüft werden. Voraussichtlich kleine Unterschiede in älteren zugelassenen Safari-Versionen betreffen nur das Aussehen (zum Beispiel den Weichzeichner der Kopfzeile, für den ein `-webkit-`-Präfix gesetzt ist, und den Zeilenumbruch von Überschriften), nicht die Funktion.
+
+**Was in Firefox und Safari von Hand zu prüfen ist** (jeweils als Rick und als Reisender, Passwort `wubba-lubba`):
+
+1. Anmelden mit falschem, dann mit richtigem Passwort.
+2. Portalübersicht: freie Plätze, Sitzpunkte, "AUSGEBUCHT" beim Abend-Portal.
+3. Details öffnen, "Platz reservieren" klicken: Meldung erscheint, Reservierung steht in der Liste.
+4. "Stornieren" klicken: **Es muss zuerst ein Bestätigungsdialog erscheinen**, erst danach wird gelöscht.
+5. Als Rick: Portal anlegen (Datumsfeld bedienbar), Kapazität unter die Zahl der Reservierungen setzen (Fehlermeldung am Feld), Portal mit Reservierungen löschen (Dialog nennt die Zahl).
+
+## 4. Offene Punkte
+
+- **Firefox und Safari** manuell prüfen (siehe oben) und das Ergebnis in der Tabelle eintragen.
+- **Bestätigungsdialoge:** Die Rückfragen beim Stornieren und Löschen sind als `data-turbo-confirm` am Formular getestet. Dass der Dialog wirklich erscheint, macht Turbo per JavaScript und kann kein Integrationstest zeigen. Das gehört in denselben manuellen Durchlauf (Schritt 4 und 5).
+- **PDF-Export der Dokumentation** mit Titelblatt (Modulname, Datum, Vor- und Nachname, Schulklasse). Diese Angaben fehlen hier bewusst, weil sie nicht im Projekt stehen.
+- **Präsentation** (Folien und Live-Demo) ist nicht Teil dieses Repositorys.
+- **Kein Testing Cheatsheet:** Die Wegleitung verweist auf ein Testing Cheatsheet der Schule, das mir nicht vorlag. Die Tests folgen den Rails-Standards (Minitest, Fixtures, Integrationstests).
+
+## 5. Glossar und Architekturentscheidungen
+
+[CONTEXT.md](../CONTEXT.md) und die beiden ADRs wurden am Ende gegen den Code abgeglichen: Die Begriffe (Portal, Booking, Traveler, Admin, Full portal, Departed portal) entsprechen der Umsetzung, ADR-0001 gilt unverändert, ADR-0002 wurde um die Erkenntnis zur Kapazitätsänderung ergänzt.
