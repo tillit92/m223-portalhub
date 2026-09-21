@@ -83,7 +83,7 @@ Anforderung: Die Portalübersicht mit 100 Portalen wird bei zehn gleichzeitigen 
 Anforderung: Ein angemeldeter Reisender erreicht die Reservierung eines Platzes von der Portalübersicht aus in höchstens zwei Klicks und erhält eine Bestätigung.
 
 - Weg: Übersicht, Klick auf "Details", Klick auf "Platz reservieren". Das sind zwei Klicks. Danach landet der Reisende auf "Meine Reservierungen" mit der Meldung "Platz reserviert. Gute Reise!" (siehe Screenshot 06).
-- Geprüft am Aufbau der Seiten und durch die Integrationstests, die genau diesen Ablauf nachspielen. Der im Antrag vorgesehene manuelle Durchlauf ist nicht erfolgt (siehe offene Punkte).
+- Geprüft am Aufbau der Seiten, durch die Integrationstests und durch einen automatisierten Durchlauf in Brave (Übersicht, Klick auf "Details", Klick auf "Platz reservieren", danach Weiterleitung mit der Meldung). Der im Antrag vorgesehene manuelle Durchlauf durch eine Person ist nicht erfolgt (siehe offene Punkte).
 
 ### 5. Kompatibilität: teilweise geprüft
 
@@ -91,7 +91,8 @@ Anforderung: Login, Portalübersicht, Reservierung und Stornierung funktionieren
 
 | Browser | Ergebnis |
 | --- | --- |
-| Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Das JavaScript-Verhalten (Bestätigungsdialoge, Klickfolge) wurde in Chrome nicht interaktiv geprüft. Die Abläufe sind zusätzlich durch Integrationstests abgedeckt, das sind aber keine Browsertests. |
+| Brave 152 (Chromium, interaktiv) | **15 von 15 Prüfungen bestanden** (`node script/browser_check.mjs`, gesteuert über das DevTools-Protokoll, mit echtem JavaScript): Reservieren mit Weiterleitung und Meldung, Stornieren und Löschen mit den **echten Bestätigungsdialogen** (Abbrechen löscht nichts, Bestätigen löscht, der Dialog nennt Portal und Anzahl Reservierungen), Abweisung eines Reisenden im Admin-Bereich, keine JavaScript-Fehler in der Konsole. Brave nutzt dieselbe Engine wie Chrome. Chrome selbst wurde damit nicht getestet. |
+| Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Dazu kommen die Integrationstests, das sind aber keine Browsertests. |
 | Firefox | **Nicht geprüft.** Auf dem Entwicklungsrechner ist Firefox nicht installiert. |
 | Safari | **Nicht geprüft.** Safari ist auf dem Entwicklungsrechner vorhanden, die automatische Steuerung ist aber ausgeschaltet (Versuch mit `safaridriver`: "Allow remote automation" in den Safari-Einstellungen unter "Entwickler" ist nicht aktiviert). Die Einstellung wurde bewusst nicht verändert. |
 
@@ -108,7 +109,7 @@ Was sich ohne Browser sagen lässt: Die Applikation lässt über `allow_browser 
 ## 4. Offene Punkte
 
 - **Manueller Durchlauf** in Firefox und Safari (siehe oben) und das Ergebnis in der Tabelle eintragen. Derselbe Durchlauf ersetzt den im Antrag vorgesehenen manuellen Test der Bedienbarkeit (Attribut 4).
-- **Bestätigungsdialoge:** Die Rückfragen beim Stornieren und Löschen sind als `data-turbo-confirm` am Formular getestet. Dass der Dialog wirklich erscheint, macht Turbo per JavaScript und kann kein Integrationstest zeigen. Das gehört in denselben manuellen Durchlauf (Schritt 4 und 5).
+- **Bestätigungsdialoge:** Die Integrationstests prüfen nur, dass `data-turbo-confirm` am Formular steht. Dass der Dialog wirklich erscheint, macht Turbo per JavaScript. Das ist in Brave (Chromium) mit echtem Browser bestätigt (`script/browser_check.mjs`). In Firefox und Safari steht es noch aus (Schritt 4 und 5 der Checkliste).
 - **PDF-Export der Dokumentation** mit Titelblatt (Modulname, Datum, Vor- und Nachname, Schulklasse). Diese Angaben fehlen hier bewusst, weil sie nicht im Projekt stehen.
 - **Präsentation** (Folien und Live-Demo) ist nicht Teil dieses Repositorys.
 - **Kein Testing Cheatsheet:** Die Wegleitung verweist auf ein Testing Cheatsheet der Schule, das im Projekt nicht vorliegt. Die Tests folgen den Rails-Standards (Minitest, Fixtures, Integrationstests).
