@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Freshly generated Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". Tickets 01 to 05 are done: login/logout (Rails built-in authentication, no password reset), `User` with role, `Portal` and `Booking`, the portal overview (root) and details page, reserving a seat (`Portal#reserve_seat_for`, the locking core), "Meine Reservierungen" with cancelling, the admin area for Rick (`Admin::` namespace behind `Admin::BaseController`: Portal CRUD and cancelling bookings), seeds and the shared design (`app/assets/stylesheets/`). Only the README and the final docs check (ticket 06) are still open. The README is still the Rails default. The work is planned in `.scratch/portalhub-mvp/` (spec plus six tickets). The requirements live in `docs/spec.md` (German); read it before building features.
+Rails 8.1 app (Ruby 4.0.6, see `.ruby-version`) for the module m223 "Rick and Morty Portalhub". All six tickets are done: login/logout (Rails built-in authentication, no password reset), `User` with role, `Portal` and `Booking`, the portal overview (root) and details page, reserving a seat (`Portal#reserve_seat_for`, the locking core), "Meine Reservierungen" with cancelling, the admin area for Rick (`Admin::` namespace behind `Admin::BaseController`: Portal CRUD and cancelling bookings), seeds and the shared design (`app/assets/stylesheets/`). The README and `docs/umsetzung.md` (state, deviations, checks) are written. Still open, and needs a human: trying the app in Firefox and Safari (see `docs/umsetzung.md`). The work was planned in `.scratch/portalhub-mvp/` (spec plus six tickets). The requirements live in `docs/spec.md` (German); read it before building features.
 
 ## Domain (from `docs/spec.md`)
 
 Multiuser app where travelers reserve a seat on a portal to another dimension. The UI and user-facing messages are German, in a Rick and Morty tone (e.g. "Portal voll! ... Versuch es mit einer anderen Dimension, Morty!").
 
-- **Entities**: `User` (name, email, password, role), `Portal` (name, dimension, departure_time, capacity), `Booking` (user_id, portal_id). Free seats = `capacity` minus the number of bookings; there is no stored counter.
+- **Entities**: `User` (name, email_address, password_digest, role), `Portal` (name, dimension, departure_time, capacity), `Booking` (user_id, portal_id). Free seats = `capacity` minus the number of bookings; there is no stored counter.
 - **Roles**: traveler (browse portals, book, view/cancel own bookings) and admin "Rick" (CRUD on portals, manage bookings). Only logged-in users may book; non-admins hitting the admin area see "Berechtigung fehlt". Portal capacity must be at least 1 (validation message "Kapazität muss mind. 1 sein").
 - **Core invariant**: bookings per portal must never exceed `capacity`, even when several users book the last seat at the same time. The spec asks for a transaction plus a lock on the portal, re-checking free seats inside it; a full portal saves no booking and shows 0 free seats with the button disabled. Cancelling asks for confirmation first.
 - **Locking on SQLite**: `Portal#lock!` (`SELECT ... FOR UPDATE`) does nothing on SQLite. Serialization comes from the Rails 8 SQLite adapter starting every write transaction with `BEGIN IMMEDIATE` (`default_transaction_mode: :immediate`), so the free-seat check has to run inside the same `transaction` block as the insert. Test this with concurrent requests, not just a sequential unit test.
@@ -67,7 +67,7 @@ Eine eigene Konventionsdatei gibt es nicht: Code-Konventionen sind die Rails-Sta
 
 Diese Bilder zeigen ERM, Breadboards und Mockups im Detail und sollten vor UI- bzw. Datenmodell-Arbeit angesehen werden:
 
-- `docs/diagrams/erm.svg` – Entity-Relationship-Model (User, Portal, Booking)
+- `docs/diagrams/erm.svg` – Entity-Relationship-Model des genehmigten Antrags (User, Portal, Booking); `docs/diagrams/erm-umgesetzt.svg` zeigt dasselbe mit den umgesetzten Spaltennamen (`email_address`, `password_digest`) und gilt für den Code
 - `docs/diagrams/breadboard.svg` – Klick-/Ablaufdiagramm durch alle Seiten inkl. Server-Prüfung
 - `docs/diagrams/wireframes.svg` – UI-Mockups aller Screens
 

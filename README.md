@@ -14,11 +14,15 @@ Was und warum (Anforderungen, ERM, Breadboards, Locking-Konzept): [docs/spec.md]
 | Framework | Ruby on Rails | 8.1.3.1 |
 | Datenbank | SQLite 3 (Gem `sqlite3`) | 2.9.6 |
 | Webserver | Puma | 8.0.2 |
-| Frontend | Hotwire (Turbo 2.0.23, Stimulus 1.3.4), Propshaft 1.3.2, importmap-rails 2.2.3, kein JavaScript-Build | |
-| Anmeldung | Rails-Authentifizierung mit `has_secure_password` (bcrypt 3.1.22) | |
-| Tests | Minitest 6.0.6, Fixtures | |
-| Qualität | Rubocop (Rails Omakase), Brakeman, bundler-audit | |
-| Schrift | Geist und Geist Mono (SIL Open Font License, selbst gehostet) | |
+| Frontend | Hotwire, Gem `turbo-rails` | 2.0.23 |
+| | Hotwire, Gem `stimulus-rails` | 1.3.4 |
+| Assets | Propshaft | 1.3.2 |
+| JavaScript | importmap-rails (kein JavaScript-Build) | 2.2.3 |
+| Anmeldung | `has_secure_password` mit bcrypt | 3.1.22 |
+| Tests | Minitest, Fixtures | 6.0.6 |
+| Stil | Rubocop mit rubocop-rails-omakase | 1.91.0 und 1.1.0 |
+| Sicherheit | Brakeman und bundler-audit | 8.0.6 und 0.9.3 |
+| Schrift | Geist und Geist Mono (SIL Open Font License, selbst gehostet) | Dateien in `app/assets/fonts` |
 
 ## Voraussetzungen
 
@@ -37,7 +41,7 @@ bin/dev                   # Server starten: http://localhost:3000
 
 ## Datenbank und Demo-Daten
 
-Vier Tabellen: `users` (mit Rolle `traveler` oder `admin`), `portals`, `bookings` (ein Reisender pro Portal höchstens einmal, dafür gibt es einen Unique-Index) und `sessions` (Anmeldung). Freie Plätze werden nie gespeichert, sondern immer aus Kapazität minus Reservierungen berechnet. Das ERM steht in [docs/spec.md](docs/spec.md).
+Vier Tabellen: `users`, `portals`, `bookings` und `sessions`. Das Schema steht in `db/schema.rb`, das ERM mit allen Spalten in [docs/umsetzung.md](docs/umsetzung.md).
 
 Die Demo-Daten stehen in `db/seeds.rb` und lassen sich beliebig oft neu laden, ohne Duplikate zu erzeugen:
 

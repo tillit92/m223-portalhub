@@ -179,3 +179,6 @@ Diese Regeln wurden nach der Genehmigung des Projektantrags geklärt. Begriffe s
 - Im ERM heissen die Spalten `USER.email_address` (statt `email`) und `USER.password_digest` (statt `password`). Grund: Der Rails-Authentifizierungsgenerator verwendet diese Namen, und ein Klartext-Passwort darf nicht gespeichert werden.
 - Die Qualitätsattribute wurden überprüfbar formuliert (sechs allgemeine Aussagen wurden zu fünf messbaren zusammengeführt), weil die Wegleitung konkrete, überprüfbare Attribute verlangt.
 - Der Abschnitt "Fat-Marker-Sketches: Transaktionen und Locking" heisst jetzt "Locking und Transaktionen" und beschreibt zusätzlich den Fall, dass Rick die Kapazität ändert.
+- Ein Reisender, der eine Admin-Seite aufruft, wird auf die Startseite geleitet und sieht dort "Berechtigung fehlt." (statt einer eigenen Fehlerseite).
+- Die mobile Ansicht ist kein Ziel. Die Applikation ist für den Desktop-Browser gebaut.
+- Die Kapazitätsänderung läuft wie das Reservieren unter `Portal#with_lock`. Auf SQLite ist die explizite Sperre dort redundant, weil `save` eine eigene Schreibtransaktion um die Validierung öffnet (siehe `docs/adr/0002-capacity-enforced-with-portal-lock.md`).

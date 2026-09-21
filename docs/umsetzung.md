@@ -27,7 +27,7 @@ Alle acht funktionalen Anforderungen des Antrags sind umgesetzt. Die Tests laufe
 | ![Meine Reservierungen](screenshots/07-meine-reservierungen.png) Meine Reservierungen | ![Admin: Portale](screenshots/08-admin-portale.png) Admin: alle Portale |
 | ![Admin: Formularfehler](screenshots/09-admin-formular-fehler.png) Admin: Kapazität unter der Zahl der Reservierungen | ![Admin: Reservierungen](screenshots/10-admin-reservierungen.png) Admin: Reservierungen eines Portals |
 
-Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu buchen, erscheint auf der Detailseite. Sie ist in `bookings_test.rb` geprüft.
+Die Meldung "Portal voll! ..." beim Versuch, ein volles Portal zu reservieren, erscheint auf der Detailseite. Sie ist in `bookings_test.rb` geprüft.
 
 ### ERM, wie umgesetzt
 
@@ -42,7 +42,7 @@ Beziehungen: `users` 1 zu n `bookings`, `portals` 1 zu n `bookings`. Freie Plät
 
 ## 2. Abweichungen vom genehmigten Antrag
 
-Die vollständige Liste mit Begründung steht in [spec.md](spec.md), Abschnitt "Präzisierungen und Abweichungen nach der Genehmigung". Die wichtigsten:
+Die Begründungen stehen in [spec.md](spec.md), Abschnitt "Präzisierungen und Abweichungen nach der Genehmigung". Zusammengefasst:
 
 - **Spaltennamen:** `email_address` und `password_digest` statt `email` und `password`. Der Rails-Authentifizierungsgenerator verwendet diese Namen, und ein Klartext-Passwort darf nicht gespeichert werden. Dazu kommt die Tabelle `sessions`.
 - **Qualitätsattribute:** Aus sechs allgemeinen Aussagen wurden fünf überprüfbare, weil die Wegleitung "sicher" oder "benutzerfreundlich" allein nicht genügen lässt.
@@ -57,9 +57,9 @@ Die vollständige Liste mit Begründung steht in [spec.md](spec.md), Abschnitt "
 
 Anforderung: Versuchen zehn Reisende gleichzeitig, den letzten freien Platz zu reservieren, wird genau eine Reservierung gespeichert.
 
-- `test/models/portal_concurrency_test.rb` startet zehn Threads mit je eigener Datenbankverbindung und prüft: genau eine Reservierung gelingt, neun sehen das volle Portal, in der Datenbank steht genau eine Buchung. Ein zweiter Fall prüft dasselbe für ein Portal mit vier Plätzen.
-- **Grenze dieses Tests:** Das Zeitfenster zwischen Zählen und Buchen ist so klein, dass dieser Test auch ohne Sperre bestand. Er beweist die Sperre deshalb nicht allein.
-- **Der eigentliche Beweis** ist ein weiterer Test in derselben Datei: Eine Reservierung wird mitten in ihrer Transaktion festgehalten, während eine zweite versucht, denselben letzten Platz zu buchen. Mit `with_lock` muss die zweite warten und sieht das volle Portal. Entfernt man `with_lock` aus `Portal#reserve_seat_for`, schlägt dieser Test fehl (so geprüft).
+- `test/models/portal_concurrency_test.rb` startet zehn Threads mit je eigener Datenbankverbindung und prüft: genau eine Reservierung gelingt, neun sehen das volle Portal, in der Datenbank steht genau eine Reservierung. Ein zweiter Fall prüft dasselbe für ein Portal mit vier Plätzen.
+- **Grenze dieses Tests:** Das Zeitfenster zwischen Zählen und Reservieren ist so klein, dass dieser Test auch ohne Sperre bestand. Er beweist die Sperre deshalb nicht allein.
+- **Der eigentliche Beweis** ist ein weiterer Test in derselben Datei: Eine Reservierung wird mitten in ihrer Transaktion festgehalten, während eine zweite versucht, denselben letzten Platz zu reservieren. Mit `with_lock` muss die zweite warten und sieht das volle Portal. Entfernt man `with_lock` aus `Portal#reserve_seat_for`, schlägt dieser Test fehl (so geprüft).
 - Die Suite lief wiederholt (fünf volle Durchläufe hintereinander) ohne Ausfall.
 
 ### 2. Berechtigungen: erfüllt
@@ -78,12 +78,12 @@ Anforderung: Die Portalübersicht mit 100 Portalen wird bei zehn gleichzeitigen 
 - **Ergebnis:** Die langsamste Anfrage dauerte in allen fünf Runden höchstens 0,125 Sekunden, die schnellste 0,018 Sekunden. Alle 50 Anfragen antworteten mit Status 200.
 - **Einschränkung:** Gemessen lokal im Entwicklungsmodus, auf dem Entwicklungsrechner und ohne Netzwerk. Im Produktionsmodus ist die Applikation eher schneller. Die Übersicht lädt die Reservierungen mit `includes`, es gibt keine Abfrage pro Zeile.
 
-### 4. Bedienbarkeit: erfüllt
+### 4. Bedienbarkeit: nach dem Aufbau der Seiten erfüllt, manueller Durchlauf offen
 
 Anforderung: Ein angemeldeter Reisender erreicht die Reservierung eines Platzes von der Portalübersicht aus in höchstens zwei Klicks und erhält eine Bestätigung.
 
 - Weg: Übersicht, Klick auf "Details", Klick auf "Platz reservieren". Das sind zwei Klicks. Danach landet der Reisende auf "Meine Reservierungen" mit der Meldung "Platz reserviert. Gute Reise!" (siehe Screenshot 06).
-- Geprüft am Aufbau der Seiten und durch die Integrationstests, die genau diesen Ablauf nachspielen. Ein Durchlauf mit einer echten Testperson ist nicht erfolgt.
+- Geprüft am Aufbau der Seiten und durch die Integrationstests, die genau diesen Ablauf nachspielen. Der im Antrag vorgesehene manuelle Durchlauf ist nicht erfolgt (siehe offene Punkte).
 
 ### 5. Kompatibilität: teilweise geprüft
 
@@ -91,11 +91,11 @@ Anforderung: Login, Portalübersicht, Reservierung und Stornierung funktionieren
 
 | Browser | Ergebnis |
 | --- | --- |
-| Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Die Abläufe sind über die Integrationstests abgedeckt. |
+| Chrome (aktuell, Headless) | Alle Bildschirme rendern korrekt, siehe Screenshots. Das JavaScript-Verhalten (Bestätigungsdialoge, Klickfolge) wurde in Chrome nicht interaktiv geprüft. Die Abläufe sind zusätzlich durch Integrationstests abgedeckt, das sind aber keine Browsertests. |
 | Firefox | **Nicht geprüft.** Auf dem Entwicklungsrechner ist Firefox nicht installiert. |
 | Safari | **Nicht geprüft.** Safari ist auf dem Entwicklungsrechner vorhanden, die automatische Steuerung ist aber ausgeschaltet (Versuch mit `safaridriver`: "Allow remote automation" in den Safari-Einstellungen unter "Entwickler" ist nicht aktiviert). Die Einstellung wurde bewusst nicht verändert. |
 
-Was sich ohne Browser sagen lässt: Die Applikation lässt über `allow_browser :modern` nur Safari ab 17.2, Chrome ab 120, Firefox ab 121 und Opera ab 106 zu und weist ältere Browser ab. Die eingesetzten CSS-Funktionen (`color-mix`, `conic-gradient`, `mask`, `100dvh`, `:focus-visible`, `aspect-ratio`) werden nach meinem Kenntnisstand von diesen Versionen unterstützt. Das ist keine Messung und sollte an den Browsern selbst gegengeprüft werden. Voraussichtlich kleine Unterschiede in älteren zugelassenen Safari-Versionen betreffen nur das Aussehen (zum Beispiel den Weichzeichner der Kopfzeile, für den ein `-webkit-`-Präfix gesetzt ist, und den Zeilenumbruch von Überschriften), nicht die Funktion.
+Was sich ohne Browser sagen lässt: Die Applikation lässt über `allow_browser :modern` nur Safari ab 17.2, Chrome ab 120, Firefox ab 121 und Opera ab 106 zu und weist ältere Browser ab. Die eingesetzten CSS-Funktionen (`color-mix`, `conic-gradient`, `mask`, `100dvh`, `:focus-visible`, `aspect-ratio`) werden nach dem bekannten Stand der Browserunterstützung von diesen Versionen unterstützt. Das ist keine Messung und sollte an den Browsern selbst gegengeprüft werden. Voraussichtlich kleine Unterschiede in älteren zugelassenen Safari-Versionen betreffen nur das Aussehen (zum Beispiel den Weichzeichner der Kopfzeile, für den ein `-webkit-`-Präfix gesetzt ist, und den Zeilenumbruch von Überschriften), nicht die Funktion.
 
 **Was in Firefox und Safari von Hand zu prüfen ist** (jeweils als Rick und als Reisender, Passwort `wubba-lubba`):
 
@@ -107,12 +107,12 @@ Was sich ohne Browser sagen lässt: Die Applikation lässt über `allow_browser 
 
 ## 4. Offene Punkte
 
-- **Firefox und Safari** manuell prüfen (siehe oben) und das Ergebnis in der Tabelle eintragen.
+- **Manueller Durchlauf** in Firefox und Safari (siehe oben) und das Ergebnis in der Tabelle eintragen. Derselbe Durchlauf ersetzt den im Antrag vorgesehenen manuellen Test der Bedienbarkeit (Attribut 4).
 - **Bestätigungsdialoge:** Die Rückfragen beim Stornieren und Löschen sind als `data-turbo-confirm` am Formular getestet. Dass der Dialog wirklich erscheint, macht Turbo per JavaScript und kann kein Integrationstest zeigen. Das gehört in denselben manuellen Durchlauf (Schritt 4 und 5).
 - **PDF-Export der Dokumentation** mit Titelblatt (Modulname, Datum, Vor- und Nachname, Schulklasse). Diese Angaben fehlen hier bewusst, weil sie nicht im Projekt stehen.
 - **Präsentation** (Folien und Live-Demo) ist nicht Teil dieses Repositorys.
-- **Kein Testing Cheatsheet:** Die Wegleitung verweist auf ein Testing Cheatsheet der Schule, das mir nicht vorlag. Die Tests folgen den Rails-Standards (Minitest, Fixtures, Integrationstests).
+- **Kein Testing Cheatsheet:** Die Wegleitung verweist auf ein Testing Cheatsheet der Schule, das im Projekt nicht vorliegt. Die Tests folgen den Rails-Standards (Minitest, Fixtures, Integrationstests).
 
 ## 5. Glossar und Architekturentscheidungen
 
-[CONTEXT.md](../CONTEXT.md) und die beiden ADRs wurden am Ende gegen den Code abgeglichen: Die Begriffe (Portal, Booking, Traveler, Admin, Full portal, Departed portal) entsprechen der Umsetzung, ADR-0001 gilt unverändert, ADR-0002 wurde um die Erkenntnis zur Kapazitätsänderung ergänzt.
+[CONTEXT.md](../CONTEXT.md) und die beiden ADRs wurden am Ende Punkt für Punkt gegen den Code abgeglichen (abgeflogene Portale sind für Reisende ausgeblendet, Stornieren löscht die Reservierung, die Kapazität kann nie unter die Anzahl Reservierungen sinken, freie Plätze werden nur berechnet, "Journey" wird nirgends gespeichert). Dabei fand sich ein Widerspruch: Das Glossar sagte, der Admin könne jede Reservierung stornieren, der Code verweigert das aber bei abgeflogenen Portalen. Das Glossar wurde korrigiert. ADR-0001 gilt unverändert, ADR-0002 enthält seit der Umsetzung der Admin-Verwaltung die Erkenntnis zur Kapazitätsänderung.
