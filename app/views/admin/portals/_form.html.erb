@@ -3,17 +3,10 @@
     <div class="flash flash--alert" role="alert"><%= message %></div>
   <% end %>
 
-  <% { name: [ "Name", :text_field ], dimension: [ "Dimension", :text_field ],
-       departure_time: [ "Abflugzeit", :datetime_local_field ], capacity: [ "Kapazität", :number_field ] }.each do |attribute, (label, kind)| %>
-    <div class="field <%= "field--error" if portal.errors[attribute].any? %>">
-      <%= form.label attribute, label %>
-      <%= form.public_send kind, attribute, required: true, min: (1 if attribute == :capacity),
-            aria: { invalid: portal.errors[attribute].any?.presence } %>
-      <% portal.errors[attribute].each do |message| %>
-        <p class="field__error"><%= message %></p>
-      <% end %>
-    </div>
-  <% end %>
+  <%= render "field", form: form, portal: portal, attribute: :name, label: "Name", kind: :text_field %>
+  <%= render "field", form: form, portal: portal, attribute: :dimension, label: "Dimension", kind: :text_field %>
+  <%= render "field", form: form, portal: portal, attribute: :departure_time, label: "Abflugzeit", kind: :datetime_local_field %>
+  <%= render "field", form: form, portal: portal, attribute: :capacity, label: "Kapazität", kind: :number_field, options: { min: 1 } %>
 
   <div class="form__actions">
     <%= form.submit "Speichern", class: "button" %>

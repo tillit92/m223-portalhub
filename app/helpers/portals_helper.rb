@@ -14,14 +14,15 @@ module PortalsHelper
     end
   end
 
-  # "Es gibt 3 Reservierungen." / "Es gibt 1 Reservierung."
-  def bookings_count_label(portal)
-    count = portal.booked_seats
-    "Es gibt #{count} #{count == 1 ? "Reservierung" : "Reservierungen"}."
-  end
-
+  # Names the consequence before a Portal with Bookings is deleted.
   def delete_portal_prompt(portal)
-    consequence = { 0 => nil, 1 => "Sie wird mit gelöscht." }.fetch(portal.booked_seats, "Sie werden mit gelöscht.")
-    [ "Portal #{portal.name} wirklich löschen?", bookings_count_label(portal), consequence ].compact.join(" ")
+    count = portal.booked_seats
+    prompt = "Portal #{portal.name} wirklich löschen?"
+
+    case count
+    when 0 then "#{prompt} Es gibt 0 Reservierungen."
+    when 1 then "#{prompt} Es gibt 1 Reservierung. Sie wird mit gelöscht."
+    else "#{prompt} Es gibt #{count} Reservierungen. Sie werden mit gelöscht."
+    end
   end
 end

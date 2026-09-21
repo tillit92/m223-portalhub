@@ -400,8 +400,8 @@ a {
   background: var(--surface);
 }
 
-.table__number {
-  text-align: right !important;
+.table .table__number {
+  text-align: right;
 }
 
 .table__nowrap {

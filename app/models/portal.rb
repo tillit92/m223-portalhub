@@ -1,4 +1,7 @@
 class Portal < ApplicationRecord
+  # Shown when SQLite is busy and the write had to give up (see ADR-0002).
+  BUSY_MESSAGE = "Gerade ist viel los, versuch es gleich nochmal.".freeze
+
   has_many :bookings, dependent: :destroy
 
   validates :name, :dimension, :departure_time, presence: { message: "bitte ausfüllen" }
@@ -40,7 +43,10 @@ class Portal < ApplicationRecord
   def update_under_lock(attributes)
     with_lock { update(attributes) }
   rescue ActiveRecord::StatementTimeout
-    errors.add(:base, "Gerade ist viel los, versuch es gleich nochmal.")
+    # The lock failed before `update` could assign anything: keep what the
+    # Admin typed so the form can show it again.
+    assign_attributes(attributes)
+    errors.add(:base, BUSY_MESSAGE)
     false
   end
 
@@ -90,7 +96,7 @@ class Portal < ApplicationRecord
   end
 
   private
-    # Bookings are counted fresh here, inside the lock of update_under_lock.
+    # Bookings are counted fresh here, inside the write transaction that `save` opens.
     def capacity_covers_bookings
       return unless capacity_changed? && capacity.present?
 

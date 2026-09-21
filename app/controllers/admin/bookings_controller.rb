@@ -13,7 +13,7 @@ class Admin::BookingsController < Admin::BaseController
       booking.destroy!
       redirect_to admin_portal_bookings_path(@portal), notice: "Reservierung storniert."
     else
-      redirect_to admin_portal_bookings_path(@portal), alert: "Dieses Portal ist schon abgeflogen. Die Reservierung bleibt bestehen."
+      redirect_to admin_portal_bookings_path(@portal), alert: Booking::CANCEL_REFUSED_MESSAGE
     end
   end
 

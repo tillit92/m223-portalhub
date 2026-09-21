@@ -23,12 +23,12 @@
     <tbody>
       <% @portals.each do |portal| %>
         <tr>
-          <th scope="row">
-            <%= portal.name %>
-            <% if portal.departed? %><span class="tag">ABGEFLOGEN</span><% end %>
-          </th>
+          <th scope="row"><%= portal.name %></th>
           <td class="mono"><%= portal.dimension %></td>
-          <td class="table__nowrap"><%= departure_label(portal) %></td>
+          <td class="table__nowrap">
+            <%= departure_label(portal) %>
+            <% if portal.departed? %><span class="tag">ABGEFLOGEN</span><% end %>
+          </td>
           <td class="table__number mono"><%= portal.capacity %></td>
           <td class="table__number mono"><%= portal.booked_seats %></td>
           <td>

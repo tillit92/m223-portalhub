@@ -56,25 +56,15 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
   # The hold is shorter than the `timeout` in config/database.yml, so the
   # waiting reservation is served instead of giving up as busy.
   test "a second reservation cannot slip into a reservation that is still running" do
-    holder_is_inside = Queue.new
-    slow_portal = Portal.find(@portal.id)
-    hold_the_transaction = ->(_user) { holder_is_inside << true; sleep 0.5; false }
-
     second_result = nil
 
-    stubbing(slow_portal, :reserved_by?, hold_the_transaction) do
-      holder = Thread.new do
-        ActiveRecord::Base.connection_pool.with_connection { slow_portal.reserve_seat_for(@travelers.first) }
-      end
-
-      holder_is_inside.pop
+    holder_result = with_a_reservation_held_open(@travelers.first) do
       second_result = ActiveRecord::Base.connection_pool.with_connection do
         Portal.find(@portal.id).reserve_seat_for(@travelers.second)
       end
-
-      assert_equal :reserved, holder.value, "the first reservation must get the seat"
     end
 
+    assert_equal :reserved, holder_result, "the first reservation must get the seat"
     assert_equal :full, second_result, "the second reservation must wait and then see a full portal"
     assert_equal 1, @portal.bookings.count, "the last seat may only be given away once"
   end
@@ -95,31 +85,41 @@ class PortalConcurrencyTest < ActiveSupport::TestCase
     @portal.update!(capacity: 2)
     @portal.bookings.create!(user: @travelers.first)
 
-    holder_is_inside = Queue.new
-    slow_portal = Portal.find(@portal.id)
-    hold_the_transaction = ->(_user) { holder_is_inside << true; sleep 0.5; false }
-
     lowered = nil
 
-    stubbing(slow_portal, :reserved_by?, hold_the_transaction) do
-      holder = Thread.new do
-        ActiveRecord::Base.connection_pool.with_connection { slow_portal.reserve_seat_for(@travelers.second) }
-      end
-
-      holder_is_inside.pop
+    holder_result = with_a_reservation_held_open(@travelers.second) do
       lowered = ActiveRecord::Base.connection_pool.with_connection do
         Portal.find(@portal.id).update_under_lock(capacity: 1)
       end
-
-      assert_equal :reserved, holder.value, "the reservation running first must get its seat"
     end
 
+    assert_equal :reserved, holder_result, "the reservation running first must get its seat"
     assert_not lowered, "lowering below the number of bookings must be refused"
     assert_equal 2, @portal.reload.capacity
     assert_equal 2, @portal.bookings.count
   end
 
   private
+    # Starts a reservation for `traveler` on its own thread and holds it open in
+    # the middle of its transaction (half a second, shorter than the `timeout` in
+    # config/database.yml). While it is held, the block runs and can try to get
+    # in. Returns what the held reservation reported.
+    def with_a_reservation_held_open(traveler)
+      holder_is_inside = Queue.new
+      slow_portal = Portal.find(@portal.id)
+      hold_the_transaction = ->(_user) { holder_is_inside << true; sleep 0.5; false }
+
+      stubbing(slow_portal, :reserved_by?, hold_the_transaction) do
+        holder = Thread.new do
+          ActiveRecord::Base.connection_pool.with_connection { slow_portal.reserve_seat_for(traveler) }
+        end
+
+        holder_is_inside.pop
+        yield
+        holder.value
+      end
+    end
+
     # Every thread first takes its own connection and its own Portal object and
     # reports that it is ready. Only once all of them stand ready does the start
     # signal fall, so they really reserve at the same moment instead of queueing

@@ -6,7 +6,7 @@ class BookingsController < ApplicationController
     departed: [ :alert, "Dieses Portal ist schon abgeflogen." ],
     already_booked: [ :alert, "Du hast bereits einen Platz in diesem Portal." ],
     full: [ :alert, "Portal voll! Dieses Portal hat bereits seine maximale Kapazität erreicht. Versuch es mit einer anderen Dimension, Morty!" ],
-    busy: [ :alert, "Gerade ist viel los, versuch es gleich nochmal." ]
+    busy: [ :alert, Portal::BUSY_MESSAGE ]
   }.freeze
 
   def index
@@ -35,7 +35,7 @@ class BookingsController < ApplicationController
       booking.destroy!
       redirect_to bookings_path, notice: "Reservierung storniert."
     else
-      redirect_to bookings_path, alert: "Dieses Portal ist schon abgeflogen. Die Reservierung bleibt bestehen."
+      redirect_to bookings_path, alert: Booking::CANCEL_REFUSED_MESSAGE
     end
   end
 end

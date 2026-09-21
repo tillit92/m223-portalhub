@@ -6,6 +6,6 @@ class Admin::BaseController < ApplicationController
 
   private
     def require_admin
-      redirect_to root_path, alert: "Berechtigung fehlt." unless Current.user.admin?
+      redirect_to root_path, alert: "Berechtigung fehlt." unless Current.user&.admin?
     end
 end

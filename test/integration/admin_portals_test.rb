@@ -8,9 +8,14 @@ class AdminPortalsTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal 5, css_select("tbody tr").size
-    assert_admin_row "Morgen-Portal", /C-137/, /\b5\b/, /\b3\b/
-    assert_admin_row "Abend-Portal", /J19-Zeta-7/
-    assert_admin_row "Gestern-Portal", /Gazorpazorp/
+
+    cells = table_row("Morgen-Portal").css("td").map { |cell| cell.text.strip }
+    assert_equal "C-137", cells[0]
+    assert_equal "5", cells[2], "capacity"
+    assert_equal "3", cells[3], "booked seats"
+
+    table_row "Abend-Portal", /J19-Zeta-7/
+    table_row "Gestern-Portal", /Gazorpazorp/, /ABGEFLOGEN/
   end
 
   test "each row offers edit, delete and bookings, and there is a button for a new portal" do
@@ -31,7 +36,7 @@ class AdminPortalsTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_portals_path
     follow_redirect!
     assert_select ".flash--notice", /Portal angelegt/
-    assert_admin_row "Blips-und-Chitz-Portal", /Arcade-7/, /01\.03\.2035, 18:30 Uhr/
+    table_row "Blips-und-Chitz-Portal", /Arcade-7/, /01\.03\.2035, 18:30 Uhr/
   end
 
   test "a capacity below 1 is refused and what was typed stays in the form" do
@@ -50,7 +55,24 @@ class AdminPortalsTest < ActionDispatch::IntegrationTest
     post admin_portals_path, params: { portal: { name: "", dimension: "", departure_time: "", capacity: 3 } }
 
     assert_response :unprocessable_entity
-    assert_select ".field--error", 3
+    assert_select ".field__error", text: "bitte ausfüllen", count: 3
+  end
+
+  test "a busy database is explained and keeps what was typed" do
+    portal = portals(:night)
+    busy = ->(*) { raise ActiveRecord::StatementTimeout, "database is locked" }
+
+    stubbing(portal, :with_lock, busy) do
+      stubbing(Portal, :find, ->(_id) { portal }) do
+        patch admin_portal_path(portal), params: { portal: { name: "Getippt-Portal", capacity: 7 } }
+      end
+    end
+
+    assert_response :unprocessable_entity
+    assert_select ".flash--alert", /Gerade ist viel los, versuch es gleich nochmal/
+    assert_select "input[name=?][value=?]", "portal[name]", "Getippt-Portal"
+    assert_select "input[name=?][value=?]", "portal[capacity]", "7"
+    assert_equal [ "Nacht-Portal", 6 ], Portal.find(portal.id).slice(:name, :capacity).values
   end
 
   test "editing a portal saves the changes and confirms them" do
@@ -135,9 +157,7 @@ class AdminPortalsTest < ActionDispatch::IntegrationTest
   end
 
   private
-    def assert_admin_row(name, *patterns)
-      row = css_select("tbody tr").find { |item| item.at_css("th").xpath("text()").text.strip == name }
-      assert row, "expected a row for #{name}"
-      patterns.each { |pattern| assert_match pattern, row.text }
+    def table_row(name, *patterns)
+      assert_row name, *patterns, row: "tbody tr", title: "th"
     end
 end

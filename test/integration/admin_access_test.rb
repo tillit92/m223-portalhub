@@ -57,14 +57,18 @@ class AdminAccessTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "nobody can reserve a seat on behalf of someone else" do
+  test "the admin cannot reserve on behalf of someone else: there is no route, and a user id is ignored" do
     sign_in_as users(:rick)
 
     assert_no_difference "Booking.count" do
       post "/admin/portals/#{portals(:night).id}/bookings", params: { user_id: users(:beth).id }
     end
-
     assert_response :not_found
+
+    post portal_bookings_path(portals(:night)), params: { user_id: users(:beth).id }
+
+    assert portals(:night).reserved_by?(users(:rick)), "the seat is booked for the admin himself"
+    assert_not portals(:night).reserved_by?(users(:beth)), "and never for the user id in the request"
   end
 
   private
