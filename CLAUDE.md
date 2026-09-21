@@ -57,22 +57,21 @@ Multiuser-Reservierungsapp für interdimensionale Portale (Rick and Morty), geba
 ## Projektkontext
 
 @docs/spec.md
-@docs/conventions.md
 @docs/wegleitung.md
 
 Die vollständige Anforderungsanalyse steht in `docs/spec.md`.
-Alle Rails-Konventionen (Namensgebung, Generatoren, Namespacing, Controller-Vererbung, Testing) stehen in `docs/conventions.md` und sind für dieses Projekt verbindlich.
+Eine eigene Konventionsdatei gibt es nicht: Code-Konventionen sind die Rails-Standards (Rubocop Omakase, Rails-Namensgebung und -Generatoren) plus die Vorgaben der Wegleitung.
 `docs/wegleitung.md` enthält die Modul-Vorgaben (Bewertungskriterien): u.a. dass automatisierte Tests explizit die zentrale Fachregel (Locking beim letzten Platz) sowie erlaubte/verweigerte Zugriffe prüfen müssen, dass `docs/` alle Bilder und Markdown-Doku enthalten muss, und wie `README.md` aufgebaut sein soll (Tech-Stack, Setup, Start-/Testbefehle, Demo-Konten). Diese Vorgaben sind beim Planen, Implementieren und beim Schreiben von README/Doku verbindlich einzuhalten.
 
 ## Diagramme
 
 Diese Bilder zeigen ERM, Breadboards und Mockups im Detail und sollten vor UI- bzw. Datenmodell-Arbeit angesehen werden:
 
-- `docs/diagrams/erm.png` – Entity-Relationship-Model (User, Portal, Booking)
-- `docs/diagrams/breadboards.png` – Klick-/Ablaufdiagramm durch alle Seiten inkl. Server-Prüfung
-- `docs/diagrams/fat-marker-sketches.png` – UI-Mockups aller 6 Screens
+- `docs/diagrams/erm.svg` – Entity-Relationship-Model (User, Portal, Booking)
+- `docs/diagrams/breadboard.svg` – Klick-/Ablaufdiagramm durch alle Seiten inkl. Server-Prüfung
+- `docs/diagrams/wireframes.svg` – UI-Mockups aller Screens
 
-Bei Fragen zu Datenmodell oder UI-Layout diese Bilder mit @docs/diagrams/<datei>.png in den Kontext holen (z.B. `@docs/diagrams/erm.png Erklär mir die Beziehungen`).
+Bei Fragen zu Datenmodell oder UI-Layout diese Dateien mit @docs/diagrams/<datei>.svg in den Kontext holen (z.B. `@docs/diagrams/erm.svg Erklär mir die Beziehungen`).
 
 ## Wichtigster technischer Punkt
 

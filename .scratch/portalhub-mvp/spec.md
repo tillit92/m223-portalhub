@@ -148,5 +148,5 @@ Every screen, the admin area included, follows the `design-taste-frontend` skill
 ## Further Notes
 
 - The binding sources are `docs/spec.md` (requirements and the section "Präzisierungen und Abweichungen nach der Genehmigung"), `CONTEXT.md` (vocabulary), and ADR-0001 and ADR-0002 in `docs/adr/`. If this spec and `docs/spec.md` disagree, `docs/spec.md` wins and this spec should be corrected.
-- `docs/conventions.md` is referenced from `CLAUDE.md` but does not exist yet; follow it once it is added.
+- There is no separate conventions file. Conventions are the Rails defaults (Rubocop omakase, Rails naming and generators) plus the requirements in `docs/wegleitung.md`.
 - The module grades tests for the core rule and for allowed and denied access, plus README and documentation that stay in sync with the implementation. Keep the README's demo accounts, seed data and test commands current as features land.
